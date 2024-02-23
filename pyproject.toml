@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "tinyrl"
+version = "0.1.0"
+authors = [
+  { name="Jonas Eschmann", email="jonas.eschmann@gmail.com" },
+]
+description = "A Python wrapper for RLtools"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/rl-tools/tinyrl"
+Issues = "https://github.com/rl-tools/tinyrl/issues"

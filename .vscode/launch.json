@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "PPO",
+            "type": "python",
+            "request": "launch",
+            "program": "tinyrl/ppo.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
+        }
+    ]
+}
