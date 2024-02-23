@@ -92,14 +92,3 @@ PYBIND11_MODULE(rl_tools, m) {
     m.def("init", &init, "Initialize the loop state");
     m.def("step", &step, "Step the loop");
 }
-
-int main(){
-    LOOP_STATE state;
-    rlt::malloc(device, state);
-    rlt::init(device, state, 0);
-    rlt::step(device, state);
-    while(!rlt::step(device, state)){
-
-    }
-    return 0;
-}
