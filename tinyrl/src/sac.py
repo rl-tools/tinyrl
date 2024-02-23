@@ -17,7 +17,7 @@ def loop_sac(env_factory):
     print(f"Compiling the TinyRL interface...")
     loop = load(
         'rl_tools',
-        sources=['src/python_environment/python_environment.cpp'],
+        sources=[os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')],
         extra_include_paths=[
             os.path.join(absolute_path, "..", "external", "rl_tools", "include"),
         ],
