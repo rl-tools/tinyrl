@@ -20,7 +20,7 @@ jobs:
 
     - name: Checkout External Submodules
       run: |
-        git submodule update --init -- external/rl_tools
+        git submodule update --init -- tinyrl/external/rl_tools
 
 
     - name: Installing Minimal Dependencies
