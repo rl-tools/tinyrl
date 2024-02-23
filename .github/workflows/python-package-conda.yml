@@ -80,4 +80,4 @@ jobs:
         TINYRL_FORCE_MKL: 1
       run: |
         conda install pytest
-        pytest tests
+        pytest tests -s
