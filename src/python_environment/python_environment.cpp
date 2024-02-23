@@ -7,6 +7,10 @@ namespace py = pybind11;
 #define TINYRL_DTYPE float
 #endif
 
+#ifndef TINYRL_EPISODE_STEP_LIMIT
+#define TINYRL_EPISODE_STEP_LIMIT 200
+#endif
+
 //#define RL_TOOLS_BACKEND_DISABLE_BLAS
 
 #include <rl_tools/operations/cpu_mux.h>
@@ -17,12 +21,7 @@ namespace py = pybind11;
 #include <rl_tools/nn_models/mlp_unconditional_stddev/operations_generic.h>
 
 
-#include <rl_tools/rl/algorithms/ppo/loop/core/config.h>
-#include <rl_tools/rl/loop/steps/evaluation/config.h>
-#include <rl_tools/rl/loop/steps/timing/config.h>
-#include <rl_tools/rl/algorithms/ppo/loop/core/operations_generic.h>
-#include <rl_tools/rl/loop/steps/evaluation/operations_generic.h>
-#include <rl_tools/rl/loop/steps/timing/operations_cpu.h>
+#include "ppo.h"
 
 namespace rlt = rl_tools;
 
@@ -33,26 +32,16 @@ using TI = typename DEVICE::index_t;
 using T = TINYRL_DTYPE;
 static constexpr TI OBSERVATION_DIM = TINYRL_OBSERVATION_DIM;
 static constexpr TI ACTION_DIM = TINYRL_ACTION_DIM;
+static constexpr TI EPISODE_STEP_LIMIT = TINYRL_EPISODE_STEP_LIMIT;
+
 
 using ENVIRONMENT_SPEC = PythonEnvironmentSpecification<T, TI, OBSERVATION_DIM, ACTION_DIM>;
 using ENVIRONMENT = PythonEnvironment<ENVIRONMENT_SPEC>;
 
-struct LOOP_CORE_PARAMETERS: rlt::rl::algorithms::ppo::loop::core::Parameters<T, TI, ENVIRONMENT>{
-    struct PPO_PARAMETERS: rlt::rl::algorithms::ppo::DefaultParameters<T, TI>{
-        static constexpr T ACTION_ENTROPY_COEFFICIENT = 0.0;
-        static constexpr TI N_EPOCHS = 2;
-        static constexpr T GAMMA = 0.9;
-    };
-    static constexpr TI BATCH_SIZE = 256;
-    static constexpr TI ACTOR_HIDDEN_DIM = 64;
-    static constexpr TI CRITIC_HIDDEN_DIM = 64;
-    static constexpr TI ON_POLICY_RUNNER_STEPS_PER_ENV = 1024;
-    static constexpr TI N_ENVIRONMENTS = 4;
-    static constexpr TI TOTAL_STEP_LIMIT = 300000;
-    static constexpr TI STEP_LIMIT = TOTAL_STEP_LIMIT/(ON_POLICY_RUNNER_STEPS_PER_ENV * N_ENVIRONMENTS) + 1;
-    static constexpr TI EPISODE_STEP_LIMIT = 200;
-};
-using LOOP_CORE_CONFIG = rlt::rl::algorithms::ppo::loop::core::Config<T, TI, RNG, ENVIRONMENT, LOOP_CORE_PARAMETERS, rlt::rl::algorithms::ppo::loop::core::ConfigApproximatorsMLP>;
+
+using LOOP_CORE_CONFIG = PPO_LOOP_CORE_CONFIG<T, TI, RNG, ENVIRONMENT, EPISODE_STEP_LIMIT>;
+
+
 template <typename NEXT>
 struct LOOP_EVAL_PARAMETERS: rlt::rl::loop::steps::evaluation::Parameters<T, TI, NEXT>{
     static constexpr TI EVALUATION_INTERVAL = 1;
@@ -71,10 +60,15 @@ void set_environment_factory(std::function<py::object()> p_environment_factory) 
 }
 
 void init(LOOP_STATE& state, TI seed){
+    std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
+    std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
+    std::cout << "Malloc" << std::endl;
     rlt::malloc(device, state);
+    std::cout << "Initializing" << std::endl;
     rlt::init(device, state, seed);
     state.actor_optimizer.parameters.alpha = 1e-3;
     state.critic_optimizer.parameters.alpha = 1e-3;
+    std::cout << "Initialized" << std::endl;
 }
 
 bool step(LOOP_STATE& state){

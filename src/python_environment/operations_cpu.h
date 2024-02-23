@@ -8,7 +8,8 @@ std::function<py::object()> environment_factory;
 namespace rl_tools{
     template<typename DEVICE, typename SPEC>
     static void malloc(DEVICE& device, PythonEnvironment<SPEC>& env){
-        env.environment = environment_factory();
+        env.environment = new py::object();
+        *env.environment = environment_factory();
     }
     template<typename DEVICE, typename SPEC>
     static void init(DEVICE& device, PythonEnvironment<SPEC>& env){}
@@ -16,7 +17,7 @@ namespace rl_tools{
     static void initial_state(DEVICE& device, const PythonEnvironment<SPEC>& env, typename PythonEnvironment<SPEC>::State& state){
         using T = typename SPEC::T;
 
-        auto result = env.environment.attr("reset")();
+        auto result = env.environment->attr("reset")();
         py::tuple result_tuple = py::cast<py::tuple>(result);
         auto first_element = result_tuple[0];
         py::array array = first_element.cast<py::array>();
@@ -49,7 +50,7 @@ namespace rl_tools{
         for(size_t i=0; i<SPEC::ACTION_DIM; i++){
             action_data_ptr[i] = get(action, 0, i);
         }
-        auto result = env.environment.attr("step")(action_array);
+        auto result = env.environment->attr("step")(action_array);
         py::tuple result_tuple = py::cast<py::tuple>(result);
         auto observation = result_tuple[0];
         auto reward = result_tuple[1];
