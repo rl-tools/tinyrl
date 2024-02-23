@@ -5,9 +5,11 @@ This wrapper is work in progress and for now just exposes the SAC training loop 
 
 ### Installation:
 ```
-git clone https://github.com/rl-tools/tinyrl
-cd tinyrl
-pip install -e .
+pip install tinyrl
+```
+For the following example:
+```
+pip install gymnasium
 ```
 
 ### Example:
