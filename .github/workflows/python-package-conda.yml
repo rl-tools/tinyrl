@@ -4,9 +4,24 @@ on: [push]
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
     strategy:
-      max-parallel: 5
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        mkl: [yes, no]
+        include:
+          - os: ubuntu-latest
+            mkl: no
+          - os: ubuntu-latest
+            mkl: yes
+          - os: macos-latest
+            mkl: no
+        exclude:
+          - os: macos-latest
+            mkl: yes
+
 
     steps:
     - uses: actions/checkout@v3
@@ -14,6 +29,17 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.10'
+
+    - name: Installing Minimal Dependencies
+      if: startsWith(matrix.os, 'ubuntu')
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
+    - name: Installing Minimal Dependencies
+      if: startsWith(matrix.os, 'macos')
+      run: |
+        brew install clang
+
     - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
@@ -21,7 +47,7 @@ jobs:
 
     - name: Install package
       run: |
-        pip install -e .
+        pip install -e .${{ matrix.c_compiler }}
     # - name: Install dependencies
     #   run: |
     #     conda env update --file environment.yml --name base

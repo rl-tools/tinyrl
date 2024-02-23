@@ -14,7 +14,7 @@ if sys.platform == "linux":
         mkl_include_version = pkg_resources.get_distribution("mkl-include").version
         print(f"MKL is installed. Version: {mkl_version} (include: {mkl_include_version})")
         mkl_lib_path = os.path.join(sys.prefix, "lib")
-        # create version symlinks for the MKL libraries
+        # create version symlinks for the MKL libraries (as they are not included in the pypi mkl package)
         for mkl_lib in ["libmkl_intel_ilp64.so", "libmkl_intel_thread.so", "libmkl_core.so"]:
             source = os.path.join(mkl_lib_path, mkl_lib + ".2")
             target = os.path.join(mkl_lib_path, mkl_lib)
