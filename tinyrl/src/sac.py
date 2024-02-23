@@ -7,6 +7,7 @@ import pkg_resources
 extra_ldflags = []
 extra_include_paths = []
 extra_cflags = []
+force_mkl = "TINYRL_FORCE_MKL" in os.environ
 if sys.platform == "linux":
     try:
         mkl_version = pkg_resources.get_distribution("mkl").version
@@ -37,6 +38,7 @@ if sys.platform == "linux":
         extra_include_paths += [os.path.join(sys.prefix + "/include")]
         extra_cflags += ["-DRL_TOOLS_BACKEND_ENABLE_MKL"]
     except pkg_resources.DistributionNotFound:
+        assert(not force_mkl)
         print("MKL is not installed.")
 
 
