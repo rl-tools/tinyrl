@@ -1,8 +1,3 @@
-# register env factory
-# call train
-    # c++ inits envs
-    # c++ trains
-
 import os, sys
 import gymnasium as gym
 from torch.utils.cpp_extension import load
@@ -27,12 +22,10 @@ ppo = load(
     sources=['src/python_environment/python_environment.cpp'],
     extra_include_paths=[
         os.path.join(absolute_path, "..", "external", "rl_tools", "include"),
-        # os.path.join(absolute_path, "external", "rl_tools", "external", "json", "include"),
     ],
     extra_cflags=[cpp_std_flag, optimization_flag, arch_flags, fast_math_flag, observation_dim_flag, action_dim_flag],
-    # define_macros=[('RL_TOOLS_ENABLE_JSON', None)],
 )
-print(f"Finished compiling")
+print(f"Finished compiling the TinyRL interface.")
 
 
 ppo.set_environment_factory(env_factory)
@@ -44,7 +37,7 @@ loop_state = ppo.LoopState()
 
 ppo.init(loop_state, 0)
 while not finished:
-    if(step % 1 == 0):
+    if(step % 100 == 0):
         print(f"Step {step}")
     finished = ppo.step(loop_state)
     step += 1

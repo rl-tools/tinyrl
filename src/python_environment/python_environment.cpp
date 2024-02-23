@@ -21,7 +21,11 @@ namespace py = pybind11;
 #include <rl_tools/nn_models/mlp_unconditional_stddev/operations_generic.h>
 
 
+#ifdef TINYRL_USE_PPO
 #include "ppo.h"
+#else
+#include "sac.h"
+#endif
 
 namespace rlt = rl_tools;
 
@@ -39,13 +43,17 @@ using ENVIRONMENT_SPEC = PythonEnvironmentSpecification<T, TI, OBSERVATION_DIM, 
 using ENVIRONMENT = PythonEnvironment<ENVIRONMENT_SPEC>;
 
 
+#ifdef TINYRL_USE_PPO
 using LOOP_CORE_CONFIG = PPO_LOOP_CORE_CONFIG<T, TI, RNG, ENVIRONMENT, EPISODE_STEP_LIMIT>;
+#else
+using LOOP_CORE_CONFIG = SAC_LOOP_CORE_CONFIG<T, TI, RNG, ENVIRONMENT, EPISODE_STEP_LIMIT>;
+#endif
 
 
 template <typename NEXT>
 struct LOOP_EVAL_PARAMETERS: rlt::rl::loop::steps::evaluation::Parameters<T, TI, NEXT>{
-    static constexpr TI EVALUATION_INTERVAL = 1;
-    static constexpr TI NUM_EVALUATION_EPISODES = 1000;
+    static constexpr TI EVALUATION_INTERVAL = 1000;
+    static constexpr TI NUM_EVALUATION_EPISODES = 10;
     static constexpr TI N_EVALUATIONS = NEXT::CORE_PARAMETERS::STEP_LIMIT / EVALUATION_INTERVAL;
 };
 
@@ -55,6 +63,7 @@ using LOOP_TIMING_CONFIG = rlt::rl::loop::steps::timing::Config<LOOP_EVAL_CONFIG
 using LOOP_CONFIG = LOOP_TIMING_CONFIG;
 using LOOP_STATE = typename LOOP_CONFIG::template State<LOOP_CONFIG>;
 
+
 void set_environment_factory(std::function<py::object()> p_environment_factory) {
     environment_factory = p_environment_factory;
 }
@@ -62,13 +71,12 @@ void set_environment_factory(std::function<py::object()> p_environment_factory) 
 void init(LOOP_STATE& state, TI seed){
     std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
     std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
-    std::cout << "Malloc" << std::endl;
     rlt::malloc(device, state);
-    std::cout << "Initializing" << std::endl;
     rlt::init(device, state, seed);
+#ifdef TINYRL_USE_PPO
     state.actor_optimizer.parameters.alpha = 1e-3;
     state.critic_optimizer.parameters.alpha = 1e-3;
-    std::cout << "Initialized" << std::endl;
+#endif
 }
 
 bool step(LOOP_STATE& state){
@@ -83,4 +91,15 @@ PYBIND11_MODULE(rl_tools, m) {
             .def(py::init<>());
     m.def("init", &init, "Initialize the loop state");
     m.def("step", &step, "Step the loop");
+}
+
+int main(){
+    LOOP_STATE state;
+    rlt::malloc(device, state);
+    rlt::init(device, state, 0);
+    rlt::step(device, state);
+    while(!rlt::step(device, state)){
+
+    }
+    return 0;
 }
