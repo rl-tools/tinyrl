@@ -5,7 +5,7 @@
             "name": "PPO",
             "type": "python",
             "request": "launch",
-            "program": "tinyrl/ppo.py",
+            "program": "examples/pendulum_sac.py",
             "console": "integratedTerminal",
             "justMyCode": true
         }
