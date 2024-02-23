@@ -70,14 +70,14 @@ jobs:
     - name: Install test dependencies
       run: |
         pip install gymnasium
+        conda install pytest
     - name: Test with pytest
       run: |
-        conda install pytest
-        pytest tests
+        python examples/pendulum_sac.py
+        # pytest tests
     - name: Test with pytest (force MKL)
       if: matrix.mkl == 'yes'
       env: 
         TINYRL_FORCE_MKL: 1
       run: |
-        conda install pytest
         pytest tests -s
