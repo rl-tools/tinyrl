@@ -20,6 +20,9 @@ dependencies = [
     "torch"
 ]
 
+[project.optional-dependencies]
+mkl = ["mkl"]
+
 [tool.hatch.build]
 include = [
   "tinyrl/__init__.py",

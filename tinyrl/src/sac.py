@@ -1,5 +1,44 @@
 import os, sys
 from torch.utils.cpp_extension import load
+from pkg_resources import resource_filename
+
+import pkg_resources
+
+extra_ldflags = []
+extra_include_paths = []
+extra_cflags = []
+if sys.platform == "linux":
+    try:
+        mkl_version = pkg_resources.get_distribution("mkl").version
+        mkl_include_version = pkg_resources.get_distribution("mkl-include").version
+        print(f"MKL is installed. Version: {mkl_version} (include: {mkl_include_version})")
+        mkl_lib_path = os.path.join(sys.prefix, "lib")
+        # create version symlinks for the MKL libraries
+        for mkl_lib in ["libmkl_intel_ilp64.so", "libmkl_intel_thread.so", "libmkl_core.so"]:
+            source = os.path.join(mkl_lib_path, mkl_lib + ".2")
+            target = os.path.join(mkl_lib_path, mkl_lib)
+            print("checking: " + source)
+            assert(os.path.exists(source))
+            if not os.path.exists(target):
+                os.symlink(source, target)
+        extra_ldflags += [
+            "-m64",
+            "-Wl,--no-as-needed",
+            "-lmkl_intel_ilp64",
+            "-lmkl_intel_thread",
+            "-lmkl_core",
+            "-liomp5",
+            "-lpthread",
+            "-lm",
+            "-ldl",
+            "-L" + mkl_lib_path,
+            "-Wl,--rpath," + mkl_lib_path,
+        ]
+        extra_include_paths += [os.path.join(sys.prefix + "/include")]
+        extra_cflags += ["-DRL_TOOLS_BACKEND_ENABLE_MKL"]
+    except pkg_resources.DistributionNotFound:
+        print("MKL is not installed.")
+
 
 enable_optimization = True
 
@@ -20,8 +59,10 @@ def loop_sac(env_factory):
         sources=[os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')],
         extra_include_paths=[
             os.path.join(absolute_path, "..", "external", "rl_tools", "include"),
+            *extra_include_paths
         ],
-        extra_cflags=[cpp_std_flag, optimization_flag, arch_flags, fast_math_flag, observation_dim_flag, action_dim_flag],
+        extra_cflags=[cpp_std_flag, optimization_flag, arch_flags, fast_math_flag, observation_dim_flag, action_dim_flag, *extra_cflags],
+        extra_ldflags=[*extra_ldflags]
     )
     print(f"Finished compiling the TinyRL interface.")
 
