@@ -10,18 +10,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        mkl: [yes, no]
-        include:
-          - os: ubuntu-latest
-            mkl: no
-          - os: ubuntu-latest
-            mkl: yes
-          - os: macos-latest
-            mkl: no
-        exclude:
-          - os: macos-latest
-            mkl: yes
-
 
     steps:
     - uses: actions/checkout@v3
@@ -34,11 +22,11 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential
+        sudo apt-get install -y build-essential ninja-build
     - name: Installing Minimal Dependencies
       if: startsWith(matrix.os, 'macos')
       run: |
-        brew install clang
+        brew install ninja
 
     - name: Add conda to system path
       run: |
