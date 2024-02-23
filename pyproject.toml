@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tinyrl"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="Jonas Eschmann", email="jonas.eschmann@gmail.com" },
 ]
@@ -19,6 +19,9 @@ classifiers = [
 dependencies = [
     "torch"
 ]
+
+[tool.hatch.build]
+include = ["external/rl_tools/include/**"]
 
 [project.urls]
 Homepage = "https://github.com/rl-tools/tinyrl"
