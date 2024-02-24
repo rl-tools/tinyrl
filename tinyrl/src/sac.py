@@ -41,20 +41,24 @@ if sys.platform == "linux":
         assert(not force_mkl)
         print("MKL is not installed.")
 
+if sys.platform == "darwin":
+    extra_cflags += ["-DRL_TOOLS_BACKEND_ENABLE_ACCELERATE"]
 
 enable_optimization = True
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
-def loop_sac(env_factory):
+def loop_sac(env_factory, enable_evaluation=True):
 
     cpp_std_flag = '-std=c++17' if not sys.platform.startswith('win') else '/std:c++17'
     optimization_flag = ('-O3' if not sys.platform.startswith('win') else '/O2') if enable_optimization else ''
     arch_flags = '-march=native' if not sys.platform.startswith('win') else '/arch:AVX2'
     fast_math_flag = '-ffast-math' if not sys.platform.startswith('win') else '/fp:fast'
+    lto_flag = '-flto' if not sys.platform.startswith('win') else '/GL'
 
     observation_dim_flag = f'-DTINYRL_OBSERVATION_DIM={env_factory().observation_space.shape[0]}'
     action_dim_flag = f'-DTINYRL_ACTION_DIM={env_factory().action_space.shape[0]}'
+    enable_evaluation_flag = '-DTINYRL_ENABLE_EVALUATION' if enable_evaluation else ''
     print(f"Compiling the TinyRL interface...")
     loop = load(
         'rl_tools',
@@ -63,8 +67,8 @@ def loop_sac(env_factory):
             os.path.join(absolute_path, "..", "external", "rl_tools", "include"),
             *extra_include_paths
         ],
-        extra_cflags=[cpp_std_flag, optimization_flag, arch_flags, fast_math_flag, observation_dim_flag, action_dim_flag, *extra_cflags],
-        extra_ldflags=[*extra_ldflags]
+        extra_cflags=[cpp_std_flag, optimization_flag, arch_flags, fast_math_flag, lto_flag, observation_dim_flag, enable_evaluation_flag, action_dim_flag, *extra_cflags],
+        extra_ldflags=[*extra_ldflags, lto_flag]
     )
     print(f"Finished compiling the TinyRL interface.")
 

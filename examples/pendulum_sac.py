@@ -12,7 +12,5 @@ loop_state = loop.LoopState()
 
 loop.init(loop_state, 0)
 while not finished:
-    if(step % 100 == 0):
-        print(f"Step {step}")
     finished = loop.step(loop_state)
     step += 1
