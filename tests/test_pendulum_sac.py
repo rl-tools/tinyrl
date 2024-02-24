@@ -6,14 +6,9 @@ def test_pendulum_sac():
         return gym.make("Pendulum-v1")
 
     loop = loop_sac(env_factory)
+    seed = 1337
+    state = loop.State(seed, env_factory)
+
     finished = False
-    step = 0
-
-    loop_state = loop.LoopState()
-
-    loop.init(loop_state, 0)
     while not finished:
-        if(step % 100 == 0):
-            print(f"Step {step}")
-        finished = loop.step(loop_state)
-        step += 1
+        finished = state.step()

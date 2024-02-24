@@ -95,4 +95,8 @@ namespace rl_tools{
     static bool terminated(DEVICE& device, const PythonEnvironment<SPEC>& env, const typename PythonEnvironment<SPEC>::State state, RNG& rng){
         return state.terminated;
     }
+    template<typename DEVICE, typename SPEC>
+    void free(DEVICE& device, PythonEnvironment<SPEC>& env){
+        delete env.environment;
+    }
 }

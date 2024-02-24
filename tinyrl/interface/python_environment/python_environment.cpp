@@ -69,31 +69,33 @@ using LOOP_CONFIG = LOOP_TIMING_CONFIG;
 using LOOP_STATE = typename LOOP_CONFIG::template State<LOOP_CONFIG>;
 
 
-void set_environment_factory(std::function<py::object()> p_environment_factory) {
-    environment_factory = p_environment_factory;
-}
-
-void init(LOOP_STATE& state, TI seed){
-    std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
-    std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
-    rlt::malloc(device, state);
-    rlt::init(device, state, seed);
+struct State: LOOP_STATE{
+    State(TI seed, std::function<py::object()> p_environment_factory){
+        std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
+        std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
+        environment_factory = p_environment_factory;
+        rlt::malloc(device, static_cast<LOOP_STATE&>(*this));
+        rlt::init(device, static_cast<LOOP_STATE&>(*this), seed);
 #ifdef TINYRL_USE_PPO
-    state.actor_optimizer.parameters.alpha = 1e-3;
-    state.critic_optimizer.parameters.alpha = 1e-3;
+        state.actor_optimizer.parameters.alpha = 1e-3;
+        state.critic_optimizer.parameters.alpha = 1e-3;
 #endif
-}
+    }
+    bool step(){
+        return rlt::step(device, static_cast<LOOP_STATE&>(*this));
+    }
+    ~State(){
+        rlt::free(device, static_cast<LOOP_STATE&>(*this));
+        environment_factory = nullptr;
+    }
+};
 
-bool step(LOOP_STATE& state){
-    return rlt::step(device, state);
-}
+
 
 PYBIND11_MODULE(rl_tools, m) {
     m.doc() = "Python Environment Wrapper";
 
-    m.def("set_environment_factory", &set_environment_factory, "Set the environment factory");
-    py::class_<LOOP_STATE>(m, "LoopState")
-            .def(py::init<>());
-    m.def("init", &init, "Initialize the loop state");
-    m.def("step", &step, "Step the loop");
+    py::class_<State>(m, "State")
+            .def(py::init<TI, std::function<py::object()>>())
+            .def("step", &State::step, "Step the loop");
 }

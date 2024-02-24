@@ -1,14 +1,13 @@
 import os, sys
 from torch.utils.cpp_extension import load
-from pkg_resources import resource_filename
-
-import pkg_resources
 
 extra_ldflags = []
 extra_include_paths = []
 extra_cflags = []
 force_mkl = "TINYRL_FORCE_MKL" in os.environ
 if sys.platform == "linux":
+    from pkg_resources import resource_filename
+    import pkg_resources
     try:
         mkl_version = pkg_resources.get_distribution("mkl").version
         mkl_include_version = pkg_resources.get_distribution("mkl-include").version
@@ -72,6 +71,4 @@ def loop_sac(env_factory, enable_evaluation=True):
     )
     print(f"Finished compiling the TinyRL interface.")
 
-
-    loop.set_environment_factory(env_factory)
     return loop

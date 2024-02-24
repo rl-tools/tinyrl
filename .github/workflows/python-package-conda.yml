@@ -73,7 +73,7 @@ jobs:
         conda install pytest
     - name: Test with pytest
       run: |
-        pytest tests
+        pytest tests -s
     - name: Test with pytest (force MKL)
       if: matrix.mkl == 'yes'
       env: 
