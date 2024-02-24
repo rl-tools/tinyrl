@@ -1,12 +1,12 @@
-from tinyrl import loop_sac
+from tinyrl import SAC
 import gymnasium as gym
 
 def env_factory():
     return gym.make("Pendulum-v1")
 
-loop = loop_sac(env_factory)
+sac = SAC(env_factory)
 seed = 1337
-state = loop.State(seed, env_factory)
+state = sac.State(seed, env_factory)
 
 finished = False
 while not finished:

@@ -47,7 +47,7 @@ enable_optimization = True
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
-def loop_sac(env_factory, enable_evaluation=True):
+def SAC(env_factory, enable_evaluation=True):
 
     cpp_std_flag = '-std=c++17' if not sys.platform.startswith('win') else '/std:c++17'
     optimization_flag = ('-O3' if not sys.platform.startswith('win') else '/O2') if enable_optimization else ''
@@ -59,8 +59,8 @@ def loop_sac(env_factory, enable_evaluation=True):
     action_dim_flag = f'-DTINYRL_ACTION_DIM={env_factory().action_space.shape[0]}'
     enable_evaluation_flag = '-DTINYRL_ENABLE_EVALUATION' if enable_evaluation else ''
     print(f"Compiling the TinyRL interface...")
-    loop = load(
-        'rl_tools',
+    sac = load(
+        'tinyrl_sac',
         sources=[os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')],
         extra_include_paths=[
             os.path.join(absolute_path, "..", "external", "rl_tools", "include"),
@@ -71,4 +71,4 @@ def loop_sac(env_factory, enable_evaluation=True):
     )
     print(f"Finished compiling the TinyRL interface.")
 
-    return loop
+    return sac 

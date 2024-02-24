@@ -92,7 +92,11 @@ struct State: LOOP_STATE{
 
 
 
-PYBIND11_MODULE(rl_tools, m) {
+#ifdef TINYRL_USE_PPO
+PYBIND11_MODULE(tinyrl_ppo, m) {
+#else
+PYBIND11_MODULE(tinyrl_sac, m) {
+#endif
     m.doc() = "Python Environment Wrapper";
 
     py::class_<State>(m, "State")
