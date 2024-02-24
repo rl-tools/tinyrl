@@ -28,15 +28,17 @@ pip install gymnasium
 
 ### Example:
 ```
-from tinyrl import loop_sac
+from tinyrl import SAC
 import gymnasium as gym
 
+seed = 0xf00d
 def env_factory():
-    return gym.make("Pendulum-v1")
+    env = gym.make("Pendulum-v1")
+    env.reset(seed=seed)
+    return env
 
-loop = loop_sac(env_factory)
-seed = 1337
-state = loop.State(seed, env_factory)
+sac = SAC(env_factory)
+state = sac.State(seed)
 
 finished = False
 while not finished:

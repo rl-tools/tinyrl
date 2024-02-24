@@ -57,7 +57,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
         ]
         for compiler in compilers
     ]
-    command_strings = [" ".join(cmd) + "\n" for cmd in cmds]
+    command_strings = [" ".join(cmd) for cmd in cmds]
     old_command_string = None
     if os.path.exists(cmd_path):
         with open(cmd_path, "r") as f:
@@ -69,7 +69,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             print(f"Compiling the TinyRL interface...")
             verbose_actual = verbose or "TINYRL_FORCE_COMPILE_VERBOSE" in os.environ
             run_kwargs = {} if verbose_actual else {"capture_output": True, "text": True}
-            result = subprocess.run(cmd, check=False, **run_kwargs)
+            result = subprocess.run(command_string, check=False, shell=True, **run_kwargs)
             if result.returncode != 0:
                 print("Command: ")
                 print(command_string)
