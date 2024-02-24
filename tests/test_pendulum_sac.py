@@ -2,11 +2,13 @@ from tinyrl import SAC
 import gymnasium as gym
 
 def test_pendulum_sac():
+    seed = 0xf00d
     def env_factory():
-        return gym.make("Pendulum-v1")
+        env = gym.make("Pendulum-v1")
+        env.reset(seed=seed)
+        return env
 
     sac = SAC(env_factory)
-    seed = 1337
     state = sac.State(seed)
 
     finished = False

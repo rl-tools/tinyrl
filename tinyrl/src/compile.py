@@ -68,7 +68,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
                 f.write(command_string)
             print(f"Compiling the TinyRL interface...")
             run_kwargs = {} if verbose else {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE, "text": True}
-            result = subprocess.run(cmd, check=True, **run_kwargs)
+            result = subprocess.run(cmd, check=False, **run_kwargs)
             if result.returncode != 0:
                 print("Command: ")
                 print(command_string)
