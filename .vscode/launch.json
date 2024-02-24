@@ -7,7 +7,21 @@
             "request": "launch",
             "program": "examples/pendulum_sac.py",
             "console": "integratedTerminal",
-            "justMyCode": false
+            "justMyCode": false,
+            "env": {
+            }
+        },
+        {
+            "name": "Pendulum SAC (recompile, verbose)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum_sac.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": ""
+            }
         }
     ]
 }
