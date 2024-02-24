@@ -16,9 +16,6 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = [
-    "torch"
-]
 
 [project.optional-dependencies]
 mkl = ["mkl"]

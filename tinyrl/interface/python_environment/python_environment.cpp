@@ -70,6 +70,10 @@ struct State: LOOP_STATE{
         std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
         std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
         environment_factory = p_environment_factory;
+        auto python_atexit = pybind11::module_::import("atexit");
+        python_atexit.attr("register")(pybind11::cpp_function([]() {
+            environment_factory = nullptr;
+        }));
         rlt::malloc(device, static_cast<LOOP_STATE&>(*this));
         rlt::init(device, static_cast<LOOP_STATE&>(*this), seed);
 #ifdef TINYRL_USE_PPO

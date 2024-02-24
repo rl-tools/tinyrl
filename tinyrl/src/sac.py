@@ -1,8 +1,7 @@
-import os, sys, shutil, subprocess
+import os, sys, shutil, subprocess, sysconfig, importlib, tempfile
+from pybind11.setup_helpers import Pybind11Extension, build_ext
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
-
-from torch.utils.cpp_extension import load
 
 extra_ldflags = []
 extra_include_paths = []
@@ -44,10 +43,10 @@ if sys.platform == "linux":
         print("MKL is not installed.")
 
 if sys.platform == "darwin":
-    extra_cflags += ["-DRL_TOOLS_BACKEND_ENABLE_ACCELERATE"]
+    extra_cflags += ["-DRL_TOOLS_BACKEND_ENABLE_ACCELERATE", "-framework", "Accelerate"]
 
 
-compilers = ["g++"] if (sys.platform in ["linux", "darwin"]) else "cl"
+compilers = ["clang++", "g++"] if (sys.platform in ["linux", "darwin"]) else "cl"
 # filter using shutil.which
 compilers = [compiler for compiler in compilers if shutil.which(compiler) is not None]
 assert len(compilers) > 0, "No C++ compiler found. Please install clang, g++ or cl (MSVC)."
@@ -59,7 +58,7 @@ python_includes = subprocess.check_output(["python3-config", "--includes"]).deco
 absolute_path = "/Users/jonas/git/tinyrl/tinyrl/src"
 
 
-def SAC(env_factory, enable_evaluation=True, enable_optimization=True):
+def SAC(env_factory, enable_evaluation=True, enable_optimization=True, verbose=False, force_recompile=False):
 
 
     shared_flag = '-shared' if not sys.platform.startswith('win') else '/LD'
@@ -75,46 +74,60 @@ def SAC(env_factory, enable_evaluation=True, enable_optimization=True):
     action_dim_flag = f'-DTINYRL_ACTION_DIM={env_factory().action_space.shape[0]}'
     enable_evaluation_flag = '-DTINYRL_ENABLE_EVALUATION' if enable_evaluation else ''
 
-    # cmd = [
-    #     compiler,
-    #     shared_flag, 
-    #     pic_flag,
-    #     cpp_std_flag,
-    #     optimization_flag,
-    #     arch_flag,
-    #     fast_math_flag,
-    #     link_stdlib_flag,
-    #     lto_flag,
-    #     *pybind_includes,
-    #     *python_includes,
-    #     "-I" + str(os.path.join(absolute_path, "..", "external", "rl_tools", "include")),
-    #     observation_dim_flag,
-    #     action_dim_flag,
-    #     enable_evaluation_flag,
-    #     os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp'),
-    #     "-o",
-    #     "python_environment.so"
-    # ]
-    # # print(" ".join(cmd))
-    # subprocess.run(cmd, check=True)
-    print(f"Compiling the TinyRL interface...")
-    sac = load(
-        'tinyrl_sac',
-        sources=[os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')],
-        extra_include_paths=[
-            os.path.join(absolute_path, "..", "external", "rl_tools", "include"),
-            *extra_include_paths
-        ],
-        extra_cflags=[cpp_std_flag, optimization_flag, arch_flag, fast_math_flag, lto_flag, observation_dim_flag, enable_evaluation_flag, action_dim_flag, *extra_cflags],
-        extra_ldflags=[*extra_ldflags, lto_flag]
-    )
-    print(f"Finished compiling the TinyRL interface.")
+    if sys.platform in ["linux", "darwin"]:
+        link_python_args = ["-L"+sysconfig.get_config_var('LIBDIR'), "-lpython" + sysconfig.get_config_var('VERSION')]
+    
+    output_dir = "/tmp/tinyrl/interface/tinyrl_sac"
+    os.makedirs(output_dir, exist_ok=True)
+    cmd_path = os.path.join(output_dir, "tinyrl_sac.txt")
+    output_path = os.path.join(output_dir, "tinyrl_sac.so")
 
-    return sac 
-
-import gymnasium as gym
-
-def env_factory():
-    return gym.make("Pendulum-v1")
-
-SAC(env_factory)
+    cmd = [
+        compiler,
+        shared_flag, 
+        pic_flag,
+        cpp_std_flag,
+        optimization_flag,
+        arch_flag,
+        fast_math_flag,
+        link_stdlib_flag,
+        lto_flag,
+        *extra_cflags,
+        *link_python_args,
+        *pybind_includes,
+        *python_includes,
+        "-I" + str(os.path.join(absolute_path, "..", "external", "rl_tools", "include")),
+        observation_dim_flag,
+        action_dim_flag,
+        enable_evaluation_flag,
+        os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp'),
+        "-o",
+        output_path
+    ]
+    command_string = " ".join(cmd)
+    old_command_string = None
+    if os.path.exists(cmd_path):
+        with open(cmd_path, "r") as f:
+            old_command_string = f.read()
+    if old_command_string is None or old_command_string != command_string or not os.path.exists(output_path) or force_recompile:
+        with open(cmd_path, "w") as f:
+            f.write(command_string)
+        print(f"Compiling the TinyRL interface...")
+        run_kwargs = {} if verbose else {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE, "text": True}
+        result = subprocess.run(cmd, check=True, **run_kwargs)
+        if result.returncode != 0:
+            print("Command: ")
+            print(command_string)
+            print("_______OUTPUT_______")
+            print(result.stdout)
+            print(result.stderr)
+            raise Exception(f"Failed to compile the TinyRL interface using {compiler}.")
+        print(f"Finished compiling the TinyRL interface.")
+    else:
+        print("Using cached TinyRL interface.")
+    spec = importlib.util.spec_from_file_location('tinyrl_sac', output_path)
+    assert spec is not None
+    module = importlib.util.module_from_spec(spec)
+    assert isinstance(spec.loader, importlib.abc.Loader)
+    spec.loader.exec_module(module)
+    return module
