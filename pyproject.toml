@@ -17,6 +17,10 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+dependencies = [
+  "pybind11"
+]
+
 [project.optional-dependencies]
 mkl = ["mkl"]
 
