@@ -64,16 +64,16 @@ using LOOP_TIMING_CONFIG = rlt::rl::loop::steps::timing::Config<LOOP_EVAL_CONFIG
 using LOOP_CONFIG = LOOP_TIMING_CONFIG;
 using LOOP_STATE = typename LOOP_CONFIG::template State<LOOP_CONFIG>;
 
+void set_environment_factory(std::function<pybind11::object()> p_environment_factory){
+    environment_factory = p_environment_factory;
+    auto python_atexit = pybind11::module_::import("atexit");
+    python_atexit.attr("register")(pybind11::cpp_function([]() {
+        environment_factory = nullptr;
+    }));
+}
 
 struct State: LOOP_STATE{
-    State(TI seed, std::function<pybind11::object()> p_environment_factory){
-        std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
-        std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
-        environment_factory = p_environment_factory;
-        auto python_atexit = pybind11::module_::import("atexit");
-        python_atexit.attr("register")(pybind11::cpp_function([]() {
-            environment_factory = nullptr;
-        }));
+    State(TI seed){
         rlt::malloc(device, static_cast<LOOP_STATE&>(*this));
         rlt::init(device, static_cast<LOOP_STATE&>(*this), seed);
 #ifdef TINYRL_USE_PPO
@@ -86,7 +86,6 @@ struct State: LOOP_STATE{
     }
     ~State(){
         rlt::free(device, static_cast<LOOP_STATE&>(*this));
-        environment_factory = nullptr;
     }
 };
 
@@ -99,6 +98,7 @@ PYBIND11_MODULE(tinyrl_sac, m) {
 #endif
     m.doc() = "TinyRL SAC Training Loop";
     pybind11::class_<State>(m, "State")
-            .def(pybind11::init<TI, std::function<pybind11::object()>>())
+            .def(pybind11::init<TI>())
             .def("step", &State::step, "Step the loop");
+    m.def("set_environment_factory", &set_environment_factory, "Set the environment factory");
 }

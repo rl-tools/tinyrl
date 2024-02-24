@@ -20,9 +20,11 @@ def SAC(env_factory, enable_evaluation=True, **kwargs):
     if sys.platform == "darwin":
         flags += link_accelerate()
 
-    module = 'tinyrl_sac'
+    module_name = 'tinyrl_sac'
     source = os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')
 
-    output_path = compile(source, module, flags, **kwargs)
+    output_path = compile(source, module_name, flags, **kwargs)
 
-    return load_module(module, output_path)
+    module = load_module(module_name, output_path)
+    module.set_environment_factory(env_factory)
+    return module

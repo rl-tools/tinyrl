@@ -7,7 +7,7 @@ def test_pendulum_sac():
 
     sac = SAC(env_factory)
     seed = 1337
-    state = sac.State(seed, env_factory)
+    state = sac.State(seed)
 
     finished = False
     while not finished:
