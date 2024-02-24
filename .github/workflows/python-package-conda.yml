@@ -38,7 +38,7 @@ jobs:
       if: startsWith(matrix.os, 'ubuntu')
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential ninja-build
+        sudo apt-get install -y build-essential ninja-build python3-dev
     - name: Installing Minimal Dependencies
       if: startsWith(matrix.os, 'macos')
       run: |
@@ -74,6 +74,9 @@ jobs:
     - name: Test with pytest
       run: |
         python3 examples/pendulum_sac.py
+      env:
+        TINYRL_FORCE_RECOMPILE: ""
+        TINYRL_FORCE_COMPILE_VERBOSE: ""
     - name: Test with pytest (force MKL)
       if: matrix.mkl == 'yes'
       env: 
