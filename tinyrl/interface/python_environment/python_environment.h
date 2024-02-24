@@ -1,4 +1,7 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 
 
 template <typename T_T, typename T_TI, T_TI T_OBSERVATION_DIM, T_TI T_ACTION_DIM>
@@ -28,5 +31,5 @@ struct PythonEnvironment{
     static constexpr TI OBSERVATION_DIM = SPEC::OBSERVATION_DIM;
     static constexpr TI OBSERVATION_DIM_PRIVILEGED = SPEC::OBSERVATION_DIM;
     static constexpr TI ACTION_DIM = SPEC::ACTION_DIM;
-    py::object* environment;
+    pybind11::object* environment;
 };

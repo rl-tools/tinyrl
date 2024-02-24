@@ -1,14 +1,11 @@
 #include "python_environment.h"
 
-#include <pybind11/functional.h>
-#include <pybind11/numpy.h>
-
-std::function<py::object()> environment_factory;
+std::function<pybind11::object()> environment_factory;
 
 namespace rl_tools{
     template<typename DEVICE, typename SPEC>
     static void malloc(DEVICE& device, PythonEnvironment<SPEC>& env){
-        env.environment = new py::object();
+        env.environment = new pybind11::object();
         *env.environment = environment_factory();
     }
     template<typename DEVICE, typename SPEC>
@@ -18,11 +15,11 @@ namespace rl_tools{
         using T = typename SPEC::T;
 
         auto result = env.environment->attr("reset")();
-        py::tuple result_tuple = py::cast<py::tuple>(result);
+        pybind11::tuple result_tuple = pybind11::cast<pybind11::tuple>(result);
         auto first_element = result_tuple[0];
-        py::array array = first_element.cast<py::array>();
-        py::buffer_info info = array.request();
-        if (info.format != py::format_descriptor<T>::format() || info.ndim != 1) {
+        pybind11::array array = first_element.cast<pybind11::array>();
+        pybind11::buffer_info info = array.request();
+        if (info.format != pybind11::format_descriptor<T>::format() || info.ndim != 1) {
             throw std::runtime_error("Incompatible buffer format. Check the floating point type of the observation returned by env.reset() and the one configured when building the TinyRL interface");
         }
         auto data_ptr = static_cast<T*>(info.ptr);
@@ -44,22 +41,22 @@ namespace rl_tools{
         static_assert(ACTION_SPEC::COLS == SPEC::ACTION_DIM);
         using T = typename SPEC::T;
 
-        py::array_t<T> action_array(SPEC::ACTION_DIM);
-        py::buffer_info action_info = action_array.request();
+        pybind11::array_t<T> action_array(SPEC::ACTION_DIM);
+        pybind11::buffer_info action_info = action_array.request();
         auto action_data_ptr = static_cast<T*>(action_info.ptr);
         for(size_t i=0; i<SPEC::ACTION_DIM; i++){
             action_data_ptr[i] = get(action, 0, i);
         }
         auto result = env.environment->attr("step")(action_array);
-        py::tuple result_tuple = py::cast<py::tuple>(result);
+        pybind11::tuple result_tuple = pybind11::cast<pybind11::tuple>(result);
         auto observation = result_tuple[0];
         auto reward = result_tuple[1];
         auto terminated = result_tuple[2];
         auto truncated = result_tuple[3];
 
-        py::array observation_array = observation.cast<py::array>();
-        py::buffer_info observation_info = observation_array.request();
-        if (observation_info.format != py::format_descriptor<T>::format() || observation_info.ndim != 1) {
+        pybind11::array observation_array = observation.cast<pybind11::array>();
+        pybind11::buffer_info observation_info = observation_array.request();
+        if (observation_info.format != pybind11::format_descriptor<T>::format() || observation_info.ndim != 1) {
             throw std::runtime_error("Incompatible buffer format. Check the floating point type of the observation returned by env.step() and the one configured when building the TinyRL interface");
         }
 

@@ -1,8 +1,4 @@
 
-#include <torch/extension.h>
-
-namespace py = pybind11;
-
 #ifndef TINYRL_DTYPE
 #define TINYRL_DTYPE float
 #endif
@@ -34,11 +30,11 @@ using RNG = decltype(rlt::random::default_engine(typename DEVICE::SPEC::RANDOM{}
 using TI = typename DEVICE::index_t;
 
 using T = TINYRL_DTYPE;
+
+
 static constexpr TI OBSERVATION_DIM = TINYRL_OBSERVATION_DIM;
 static constexpr TI ACTION_DIM = TINYRL_ACTION_DIM;
 static constexpr TI EPISODE_STEP_LIMIT = TINYRL_EPISODE_STEP_LIMIT;
-
-
 using ENVIRONMENT_SPEC = PythonEnvironmentSpecification<T, TI, OBSERVATION_DIM, ACTION_DIM>;
 using ENVIRONMENT = PythonEnvironment<ENVIRONMENT_SPEC>;
 
@@ -70,7 +66,7 @@ using LOOP_STATE = typename LOOP_CONFIG::template State<LOOP_CONFIG>;
 
 
 struct State: LOOP_STATE{
-    State(TI seed, std::function<py::object()> p_environment_factory){
+    State(TI seed, std::function<pybind11::object()> p_environment_factory){
         std::cout << "Environment Observation Dim: " << OBSERVATION_DIM << std::endl;
         std::cout << "Environment Action Dim: " << ACTION_DIM << std::endl;
         environment_factory = p_environment_factory;
@@ -97,9 +93,8 @@ PYBIND11_MODULE(tinyrl_ppo, m) {
 #else
 PYBIND11_MODULE(tinyrl_sac, m) {
 #endif
-    m.doc() = "Python Environment Wrapper";
-
-    py::class_<State>(m, "State")
-            .def(py::init<TI, std::function<py::object()>>())
+    m.doc() = "TinyRL SAC Training Loop";
+    pybind11::class_<State>(m, "State")
+            .def(pybind11::init<TI, std::function<pybind11::object()>>())
             .def("step", &State::step, "Step the loop");
 }
