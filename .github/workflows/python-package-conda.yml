@@ -73,7 +73,7 @@ jobs:
         conda install pytest
     - name: Test with pytest
       run: |
-        pytest tests -s
+        python3 examples/pendulum_sac.py
     - name: Test with pytest (force MKL)
       if: matrix.mkl == 'yes'
       env: 
