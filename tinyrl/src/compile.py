@@ -57,7 +57,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
         ]
         for compiler in compilers
     ]
-    command_strings = [" ".join(cmd) for cmd in cmds]
+    command_strings = [" ".join(cmd) + "\n" for cmd in cmds]
     old_command_string = None
     if os.path.exists(cmd_path):
         with open(cmd_path, "r") as f:
