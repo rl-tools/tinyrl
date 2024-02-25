@@ -9,6 +9,12 @@ def link_mkl():
             mkl_version = version("mkl")
             mkl_include_version = version("mkl-include")
             print(f"MKL is installed. Version: {mkl_version} (include: {mkl_include_version})")
+            mkl_include_files = files("mkl-include")
+            mkl_main_header_index = [os.path.basename(str(f)) == "mkl.h" for f in mkl_include_files].index(True)
+            mkl_main_header_path = mkl_include_files[mkl_main_header_index]
+            mkl_include_path = os.path.dirname(mkl_main_header_path.locate())
+            print(f"MKL include path: {mkl_include_path}")
+
             mkl_files = files("mkl")
             # create version symlinks for the MKL libraries (as they are not included in the pypi mkl package)
             required_libraries = ["libmkl_intel_ilp64", "libmkl_intel_thread", "libmkl_core"]
@@ -32,12 +38,12 @@ def link_mkl():
                 "-lpthread",
                 "-lm",
                 "-ldl",
-                # "-L" + mkl_lib_path,
+                "-I" + mkl_include_path,
                 "-Wl,--rpath," + ":".join([str(os.path.dirname(p)) for p in required_libraries_paths_absolute]),
             ]
             flags += ["-I" + os.path.join(sys.prefix + "/include")]
             flags += ["-DRL_TOOLS_BACKEND_ENABLE_MKL"]
         except PackageNotFoundError:
             assert(not force_mkl)
-            print("MKL is not installed.")
+            print("MKL is not installed. To use MKL please install `mkl` and `mkl-include`")
     return flags

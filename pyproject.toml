@@ -22,7 +22,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-mkl = ["mkl"]
+mkl = [
+  "mkl",
+  "mkl-include"
+]
 
 [tool.hatch.build]
 include = [
