@@ -26,6 +26,10 @@ jobs:
       run: |
         git submodule update --init -- tinyrl/external/rl_tools
 
+    - name: Update pip
+      run: |
+        pip install --upgrade pip
+
     - name: Install package
       if: matrix.mkl == 'no'
       run: |

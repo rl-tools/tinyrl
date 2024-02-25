@@ -17,7 +17,7 @@ jobs:
             mkl: yes
     steps:
     - uses: actions/checkout@v3
-    - uses: conda-incubator/setup-miniconda@v3
+    - uses: conda-incubator/setup-miniconda@main
       with:
         auto-update-conda: true
         python-version: ${{ matrix.python-version }}
@@ -25,6 +25,10 @@ jobs:
     - name: Checkout External Submodules
       run: |
         git submodule update --init -- tinyrl/external/rl_tools
+
+    - name: Update pip
+      run: |
+        pip install --upgrade pip
 
     - name: Install package
       if: matrix.mkl == 'no'
