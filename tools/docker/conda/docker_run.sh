@@ -1,0 +1,1 @@
+docker run -it --rm -v $(pwd)/../../../:/tinyrl:ro tinyrl:conda bash /tinyrl/tools/docker/conda/entrypoint.sh

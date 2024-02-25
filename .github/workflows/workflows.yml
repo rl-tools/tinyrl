@@ -3,7 +3,7 @@ name: Python Package using Conda
 on: [push]
 
 jobs:
-  build-linux:
+  test:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -34,20 +34,20 @@ jobs:
         git submodule update --init -- tinyrl/external/rl_tools
 
 
-    - name: Installing Minimal Dependencies
-      if: startsWith(matrix.os, 'ubuntu')
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential
+    # - name: Installing Minimal Dependencies
+    #   if: startsWith(matrix.os, 'ubuntu')
+    #   run: |
+    #     sudo apt-get update
+    #     sudo apt-get install -y build-essential
     # - name: Installing Minimal Dependencies
     #   if: startsWith(matrix.os, 'macos')
     #   run: |
     #     brew install ninja
 
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
+    # - name: Add conda to system path
+    #   run: |
+    #     # $CONDA is an environment variable pointing to the root of the miniconda directory
+    #     echo $CONDA/bin >> $GITHUB_PATH
 
     - name: Install package
       if: matrix.mkl == 'no'
@@ -69,11 +69,12 @@ jobs:
     #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install test dependencies
       run: |
-        pip install gymnasium
-        conda install pytest
+        pip install gymnasium pytest
+        
     - name: Test with pytest
+      if: matrix.mkl == 'no'
       run: |
-        python3 examples/pendulum_sac.py
+        pytest tests -s
       env:
         TINYRL_FORCE_RECOMPILE: ""
         TINYRL_FORCE_COMPILE_VERBOSE: ""
