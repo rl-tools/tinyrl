@@ -1,0 +1,53 @@
+name: Test TinyRL using conda
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        mkl: [no, yes]
+        python-version: [3.12, 3.11, 3.10, 3.9]
+        exclude:
+          - os: macos-latest
+            mkl: yes
+    steps:
+    - uses: actions/checkout@v3
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        auto-update-conda: true
+        python-version: ${{ matrix.python-version }}
+
+    - name: Checkout External Submodules
+      run: |
+        git submodule update --init -- tinyrl/external/rl_tools
+
+    - name: Install package
+      if: matrix.mkl == 'no'
+      run: |
+        pip install -e .
+    - name: Install package
+      if: matrix.mkl == 'yes'
+      run: |
+        pip install -e .[mkl]
+    - name: Install test dependencies
+      run: |
+        pip install gymnasium pytest
+        
+    - name: Test with pytest
+      if: matrix.mkl == 'no'
+      run: |
+        pytest tests -s
+      env:
+        TINYRL_FORCE_RECOMPILE: ""
+        TINYRL_FORCE_COMPILE_VERBOSE: ""
+    - name: Test with pytest (force MKL)
+      if: matrix.mkl == 'yes'
+      env: 
+        TINYRL_FORCE_MKL: 1
+      run: |
+        pytest tests -s
