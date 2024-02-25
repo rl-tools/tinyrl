@@ -22,7 +22,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     link_stdlib_flag = '-stdlib=libc++' if sys.platform == 'darwin' else ''
 
     pybind_includes = subprocess.check_output(["python3", "-m", "pybind11", "--includes"]).decode().strip().split()
-    python_includes = subprocess.check_output(["python3-config", "--includes"]).decode().strip().split()
+    python_includes = ["-I" + sysconfig.get_paths()['include']] #subprocess.check_output(["python3-config", "--includes"]).decode().strip().split()
 
     link_python_args = []
     if sys.platform in ["linux", "darwin"]:
@@ -64,8 +64,6 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             old_command_string = f.read()
     if old_command_string is None or (not old_command_string in command_strings) or not os.path.exists(output_path) or force_recompile or "TINYRL_FORCE_RECOMPILE" in os.environ:
         for compiler, cmd, command_string in zip(compilers, cmds, command_strings):
-            with open(cmd_path, "w") as f:
-                f.write(command_string)
             print(f"Compiling the TinyRL interface...")
             verbose_actual = verbose or "TINYRL_FORCE_COMPILE_VERBOSE" in os.environ
             run_kwargs = {} if verbose_actual else {"capture_output": True, "text": True}
@@ -78,6 +76,8 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
                     print(result.stdout)
                     print(result.stderr)
                 raise Exception(f"Failed to compile the TinyRL interface using {compiler}.")
+            with open(cmd_path, "w") as f:
+                f.write(command_string)
             print(f"Finished compiling the TinyRL interface.")
             break
     else:

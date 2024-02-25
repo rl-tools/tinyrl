@@ -1,0 +1,17 @@
+{
+    "name": "TinyRL Ubuntu Development",
+    "image": "tinyrl:ubuntu",
+    "runArgs": [
+        "--platform=linux/amd64",
+        "-v", "${localWorkspaceFolder}:/tinyrl"
+    ],
+    "settings": { 
+        // Put any VS Code settings here, e.g., to specify the terminal to use.
+    },
+    "extensions": [
+        // List any VS Code extensions you want installed inside the container.
+    ],
+    "postCreateCommand": "echo 'Container is ready!'",
+    "workspaceFolder": "/tinyrl",
+    "remoteUser": "root" // or specify another user if you're not running as root
+}

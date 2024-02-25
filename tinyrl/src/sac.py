@@ -2,6 +2,7 @@ import os, sys, importlib
 
 from .compile import compile
 from .link_accelerate import link_accelerate
+from .link_mkl import link_mkl
 from .load_module import load_module
 
 
@@ -19,6 +20,9 @@ def SAC(env_factory, enable_evaluation=True, **kwargs):
 
     if sys.platform == "darwin":
         flags += link_accelerate()
+    elif sys.platform == "linux":
+        flags += link_mkl()
+
 
     module_name = 'tinyrl_sac'
     source = os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')

@@ -1,1 +1,1 @@
-docker run -it --rm -v $(pwd)/../../../:/tinyrl:ro tinyrl:ubuntu bash /tinyrl/tools/docker/ubuntu/entrypoint.sh
+docker run -it --platform linux/amd64 --rm -v $(pwd)/../../../:/tinyrl:ro tinyrl:ubuntu bash /tinyrl/tools/docker/ubuntu/entrypoint.sh
