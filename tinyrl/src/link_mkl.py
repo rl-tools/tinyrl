@@ -30,6 +30,7 @@ def link_mkl():
                     print(f"MKL library {lib} not found.")
                     required_libraries_paths = None
             required_libraries_paths_absolute = [str(p.locate()) for p in required_libraries_paths]
+            required_libraries_search_paths = [str(os.path.dirname(p)) for p in required_libraries_paths_absolute]
             flags += [
                 "-m64",
                 "-Wl,--no-as-needed",
@@ -39,7 +40,8 @@ def link_mkl():
                 "-lm",
                 "-ldl",
                 "-I" + mkl_include_path,
-                "-Wl,--rpath," + ":".join([str(os.path.dirname(p)) for p in required_libraries_paths_absolute]),
+                *[f"-L{p}" for p in required_libraries_search_paths],
+                "-Wl,--rpath," + ":".join(required_libraries_search_paths),
             ]
             flags += ["-I" + os.path.join(sys.prefix + "/include")]
             flags += ["-DRL_TOOLS_BACKEND_ENABLE_MKL"]
