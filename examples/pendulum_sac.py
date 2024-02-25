@@ -10,6 +10,19 @@ def env_factory():
 sac = SAC(env_factory)
 state = sac.State(seed)
 
+# Training
 finished = False
 while not finished:
     finished = state.step()
+
+# Inference
+env_replay = gym.make("Pendulum-v1", render_mode="human")
+
+while True:
+    observation, _ = env_replay.reset(seed=seed)
+    finished = False
+    while not finished:
+        env_replay.render()
+        action = state.action(observation)
+        observation, reward, terminated, truncated, _ = env_replay.step(action)
+        finished = terminated or truncated

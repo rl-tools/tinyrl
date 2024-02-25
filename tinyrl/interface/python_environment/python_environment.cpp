@@ -84,6 +84,36 @@ struct State: LOOP_STATE{
     bool step(){
         return rlt::step(device, static_cast<LOOP_STATE&>(*this));
     }
+    pybind11::array_t<T> action(const pybind11::array_t<T>& observation){
+        pybind11::buffer_info observation_info = observation.request();
+        if (observation_info.format != pybind11::format_descriptor<T>::format() || observation_info.ndim != 1) {
+            throw std::runtime_error("Incompatible buffer format. Check the floating point type of the observation returned by env.step() and the one configured when building the TinyRL interface");
+        }
+        auto observation_data_ptr = static_cast<T*>(observation_info.ptr);
+        size_t num_elements = observation_info.shape[0];
+        if(num_elements != OBSERVATION_DIM){
+            throw std::runtime_error("Incompatible observation dimension. Check the dimension of the observation returned by env.step() and the one configured when building the TinyRL interface");
+        }
+        rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, OBSERVATION_DIM>> observation_rlt;
+        rlt::malloc(device, observation_rlt);
+        for(TI observation_i=0; observation_i<num_elements; observation_i++){
+            rlt::set(observation_rlt, 0, observation_i, observation_data_ptr[observation_i]);
+        }
+        rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, 2*ACTION_DIM>> action_distribution; //2x for mean and std
+        rlt::malloc(device, action_distribution);
+        rlt::evaluate(device, this->actor_critic.actor, observation_rlt, action_distribution, this->actor_deterministic_evaluation_buffers);
+        rlt::free(device, observation_rlt);
+
+        auto action_rlt = rlt::view(device, action_distribution, rlt::matrix::ViewSpec<1, ACTION_DIM>{});
+
+        std::vector<T> action(ACTION_DIM);
+
+        for (TI action_i = 0; action_i < ACTION_DIM; action_i++) {
+            action[action_i] = rlt::get(action_rlt, 0, action_i);
+        }
+
+        return pybind11::array_t<T>(ACTION_DIM, action.data());
+    }
     ~State(){
         rlt::free(device, static_cast<LOOP_STATE&>(*this));
     }
@@ -99,6 +129,7 @@ PYBIND11_MODULE(tinyrl_sac, m) {
     m.doc() = "TinyRL SAC Training Loop";
     pybind11::class_<State>(m, "State")
             .def(pybind11::init<TI>())
-            .def("step", &State::step, "Step the loop");
+            .def("step", &State::step, "Step the loop")
+            .def("action", &State::action, "Get the action for the given observation");
     m.def("set_environment_factory", &set_environment_factory, "Set the environment factory");
 }
