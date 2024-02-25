@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: Test TinyRL using pip
 
 on: [push]
 
@@ -10,18 +10,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        mkl: [yes, no]
-        include:
-          - os: ubuntu-latest
-            mkl: no
-          - os: ubuntu-latest
-            mkl: yes
-          - os: macos-latest
-            mkl: no
+        mkl: [no, yes]
+        python-version: [3.12, 3.11, 3.10, 3.9]
         exclude:
           - os: macos-latest
             mkl: yes
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
@@ -33,21 +26,10 @@ jobs:
       run: |
         git submodule update --init -- tinyrl/external/rl_tools
 
-
-    # - name: Installing Minimal Dependencies
-    #   if: startsWith(matrix.os, 'ubuntu')
-    #   run: |
-    #     sudo apt-get update
-    #     sudo apt-get install -y build-essential
-    # - name: Installing Minimal Dependencies
-    #   if: startsWith(matrix.os, 'macos')
-    #   run: |
-    #     brew install ninja
-
-    # - name: Add conda to system path
-    #   run: |
-    #     # $CONDA is an environment variable pointing to the root of the miniconda directory
-    #     echo $CONDA/bin >> $GITHUB_PATH
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
 
     - name: Install package
       if: matrix.mkl == 'no'
@@ -57,16 +39,6 @@ jobs:
       if: matrix.mkl == 'yes'
       run: |
         pip install -e .[mkl]
-    # - name: Install dependencies
-    #   run: |
-    #     conda env update --file environment.yml --name base
-    # - name: Lint with flake8
-    #   run: |
-    #     conda install flake8
-    #     # stop the build if there are Python syntax errors or undefined names
-    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Install test dependencies
       run: |
         pip install gymnasium pytest

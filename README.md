@@ -7,24 +7,10 @@ This wrapper is work in progress and for now just exposes the SAC training loop 
 ```
 pip install tinyrl
 ```
-For the PyTorch `cpp_extension` util:
-```
-brew install ninja
-```
-```
-apt install -y build-essential ninja-build
-```
-
-```
-brew install ninja
-```
-
 For the following example:
 ```
 pip install gymnasium
 ```
-
-
 
 ### Example:
 ```
@@ -45,3 +31,10 @@ while not finished:
     finished = state.step()
 ```
 
+
+# Acceleration
+
+On macOS TinyRL automatically uses Accelerate. To use MKL on linux you can install TinyRL with the `mkl` option:
+```
+pip install tinyrl[mkl]
+```
