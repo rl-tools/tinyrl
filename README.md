@@ -29,7 +29,7 @@ while not finished:
 
 ### Evaluating the Trained Policy
 ```
-pip install gymnasium\[classic-control\]
+pip install gymnasium[classic-control]
 ```
 
 ```
