@@ -1,4 +1,5 @@
 import os, sys, sysconfig, shutil, subprocess
+from .. import CACHE_PATH
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -12,6 +13,11 @@ def find_compiler():
 
 
 def compile(source, module, flags=[], enable_optimization=True, force_recompile=False, verbose=False):
+    '''
+    Takes a link to a source file and compiles it into a shared object.
+    Caches the compilation in /tmp/tinyrl/interface/{module}/
+    Returns the path to the shared object.
+    '''
     shared_flag = '-shared' if not sys.platform.startswith('win') else '/LD'
     cpp_std_flag = '-std=c++17' if not sys.platform.startswith('win') else '/std:c++17'
     optimization_flag = ('-O3' if not sys.platform.startswith('win') else '/O2') if enable_optimization else ''
@@ -23,15 +29,16 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
 
     pybind_includes = subprocess.check_output(["python3", "-m", "pybind11", "--includes"]).decode().strip().split()
     python_includes = ["-I" + sysconfig.get_paths()['include']] #subprocess.check_output(["python3-config", "--includes"]).decode().strip().split()
+    rl_tools_includes = ["-I" + str(os.path.join(absolute_path, "..", "external", "rl_tools", "include"))]
 
     link_python_args = []
     if sys.platform in ["linux", "darwin"]:
         link_python_args = ["-L"+sysconfig.get_config_var('LIBDIR'), "-lpython" + sysconfig.get_config_var('VERSION')]
     
-    output_dir = f"/tmp/tinyrl/interface/{module}"
+    output_dir = f"{CACHE_PATH}/build/{module}"
     os.makedirs(output_dir, exist_ok=True)
-    cmd_path = os.path.join(output_dir, f"{module}.txt")
-    output_path = os.path.join(output_dir, f"{module}.so")
+    cmd_path = os.path.join(output_dir, f"cmd.txt")
+    output_path = os.path.join(output_dir, f"module.so")
 
     compilers = find_compiler()
 
@@ -50,7 +57,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             *link_python_args,
             *pybind_includes,
             *python_includes,
-            "-I" + str(os.path.join(absolute_path, "..", "external", "rl_tools", "include")),
+            *rl_tools_includes,
             source,
             "-o",
             output_path
