@@ -1,6 +1,17 @@
 from string import Template
 import os
 
+def sanitize_values(kwargs):
+    output = {}
+    for key, value in kwargs.items():
+        if isinstance(value, str):
+            output[key] = value
+        elif isinstance(value, bool):
+            output[key] = "true" if value else "false"
+        else:
+            output[key] = str(value)
+    return output
+
 def render(template_path, output_path, **kwargs):
     '''
     Returns True if a new file was written or if the file was modified.

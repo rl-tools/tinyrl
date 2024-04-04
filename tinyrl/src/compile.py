@@ -12,7 +12,7 @@ def find_compiler():
     return compilers
 
 
-def compile(source, module, flags=[], enable_optimization=True, force_recompile=False, verbose=False):
+def compile(source, module, flags=[], enable_optimization=True, force_recompile=False, verbose=False, **kwargs):
     '''
     Takes a link to a source file and compiles it into a shared object.
     Caches the compilation in /tmp/tinyrl/interface/{module}/
