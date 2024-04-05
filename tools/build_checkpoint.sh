@@ -1,0 +1,1 @@
+g++ -std=c++17 -I../tinyrl/external/rl_tools/include ../tinyrl/interface/inference/inference.cpp

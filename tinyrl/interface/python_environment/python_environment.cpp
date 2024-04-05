@@ -17,6 +17,10 @@
 
 #include "operations_cpu.h"
 #include <rl_tools/nn_models/sequential/operations_generic.h>
+#include <rl_tools/nn/optimizers/adam/persist_code.h>
+#include <rl_tools/nn/layers/dense/persist_code.h>
+#include <rl_tools/nn/parameters/persist_code.h>
+#include <rl_tools/nn_models/sequential/persist_code.h>
 #include <rl_tools/nn_models/mlp_unconditional_stddev/operations_generic.h>
 
 // #ifdef TINYRL_USE_PPO
@@ -107,7 +111,7 @@ struct State: LOOP_STATE{
         }
         rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, 2*ACTION_DIM>> action_distribution; //2x for mean and std
         rlt::malloc(device, action_distribution);
-        rlt::evaluate(device, this->actor_critic.actor, observation_rlt, action_distribution, this->actor_deterministic_evaluation_buffers);
+        rlt::evaluate(device, rlt::get_actor(*this), observation_rlt, action_distribution, this->actor_deterministic_evaluation_buffers);
         rlt::free(device, observation_rlt);
 
         auto action_rlt = rlt::view(device, action_distribution, rlt::matrix::ViewSpec<1, ACTION_DIM>{});
@@ -119,6 +123,9 @@ struct State: LOOP_STATE{
         }
 
         return pybind11::array_t<T>(ACTION_DIM, action.data());
+    }
+    std::string export_policy(){
+        return rlt::save_code(device, rlt::get_actor(*this), "policy");
     }
     ~State(){
         rlt::free(device, static_cast<LOOP_STATE&>(*this));
@@ -132,6 +139,7 @@ PYBIND11_MODULE(TINYRL_MODULE_NAME, m) {
     pybind11::class_<State>(m, "State")
             .def(pybind11::init<TI>())
             .def("step", &State::step, "Step the loop")
-            .def("action", &State::action, "Get the action for the given observation");
+            .def("action", &State::action, "Get the action for the given observation")
+            .def("export_policy", &State::export_policy, "Export the policy to a python file");
     m.def("set_environment_factory", &set_environment_factory, "Set the environment factory");
 }

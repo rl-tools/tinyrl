@@ -15,6 +15,10 @@ finished = False
 while not finished:
     finished = state.step()
 
+# Save Checkpoint
+with open("pendulum_sac_checkpoint.h", "w") as f:
+    f.write(state.export_policy())
+
 # Inference
 env_replay = gym.make("Pendulum-v1", render_mode="human")
 
@@ -26,3 +30,6 @@ while True:
         action = state.action(observation)
         observation, reward, terminated, truncated, _ = env_replay.step(action)
         finished = terminated or truncated
+
+
+

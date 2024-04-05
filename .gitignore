@@ -2,3 +2,4 @@
 /build
 /**/__pycache__
 /dist
+/pendulum_sac_checkpoint.h
