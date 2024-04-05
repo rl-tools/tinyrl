@@ -35,6 +35,16 @@
                 "TINYRL_FORCE_COMPILE_VERBOSE": "",
                 "TINYRL_FORCE_MKL": ""
             }
-        }
+        },
+        {
+            "name": "Load Checkpoint",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum_sac_inference.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+            }
+        },
     ]
 }

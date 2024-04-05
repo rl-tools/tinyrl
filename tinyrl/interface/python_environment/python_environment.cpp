@@ -134,7 +134,7 @@ struct State: LOOP_STATE{
 
 
 
-PYBIND11_MODULE(TINYRL_MODULE_NAME, m) {
+PYBIND11_MODULE(TINYRL_MODULE_NAME, m){
     m.doc() = "TinyRL SAC Training Loop";
     pybind11::class_<State>(m, "State")
             .def(pybind11::init<TI>())

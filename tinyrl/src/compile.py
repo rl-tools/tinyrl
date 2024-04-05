@@ -1,4 +1,5 @@
 import os, sys, sysconfig, shutil, subprocess
+import pybind11
 from .. import CACHE_PATH
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
@@ -27,7 +28,8 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     pic_flag = '-fPIC' if not sys.platform.startswith('win') else '/LD'
     link_stdlib_flag = '-stdlib=libc++' if sys.platform == 'darwin' else ''
 
-    pybind_includes = subprocess.check_output(["python3", "-m", "pybind11", "--includes"]).decode().strip().split()
+    # pybind_includes = subprocess.check_output(["python3", "-m", "pybind11", "--includes"]).decode().strip().split()
+    pybind_includes = [f"-I{pybind11.get_include()}"]
     python_includes = ["-I" + sysconfig.get_paths()['include']] #subprocess.check_output(["python3-config", "--includes"]).decode().strip().split()
     rl_tools_includes = ["-I" + str(os.path.join(absolute_path, "..", "external", "rl_tools", "include"))]
 
