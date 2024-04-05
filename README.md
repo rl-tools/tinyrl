@@ -46,6 +46,17 @@ while True:
 ```
 
 
+### Saving and Loading Checkpoints
+
+```
+# Save
+with open("pendulum_sac_checkpoint.h", "w") as f:
+    f.write(state.export_policy())
+# Load
+from tinyrl import load_checkpoint_from_path
+policy = load_checkpoint_from_path("pendulum_sac_checkpoint.h")
+action = policy.evaluate(observation) # Note that e.g. SAC's policies output mean and std (concatenated)
+```
 
 # Acceleration
 

@@ -1,10 +1,9 @@
 import os, sys, importlib
 
 from .compile import compile
-from .link_accelerate import link_accelerate
-from .link_mkl import link_mkl
 from .load_module import load_module
 from .render import render, sanitize_values
+from .accelerate import acceleration_flags
 
 from .. import CACHE_PATH
 
@@ -58,10 +57,7 @@ def SAC(env_factory, enable_evaluation=True,
     flags = [observation_dim_flag, action_dim_flag, enable_evaluation_flag, module_flag]
 
 
-    if sys.platform == "darwin":
-        flags += link_accelerate()
-    elif sys.platform == "linux":
-        flags += link_mkl()
+    flags += acceleration_flags()
 
 
     source = os.path.join(absolute_path, '../interface/python_environment/python_environment.cpp')

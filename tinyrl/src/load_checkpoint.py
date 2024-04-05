@@ -2,16 +2,14 @@ import os, hashlib
 from .. import CACHE_PATH
 from .load_module import load_module
 from .compile import compile
+from .accelerate import acceleration_flags
 
-import time
-
-
-def load_checkpoint_from_path(checkpoint_path, force_recompile=False):
+def load_checkpoint_from_path(checkpoint_path, force_recompile=False, verbose=False):
     with open(checkpoint_path, "r") as f:
         checkpoint = f.read()
-    return load_checkpoint(checkpoint, force_recompile=force_recompile)
+    return load_checkpoint(checkpoint, force_recompile=force_recompile, verbose=verbose)
 
-def load_checkpoint(checkpoint, force_recompile=False):
+def load_checkpoint(checkpoint, force_recompile=False, verbose=False):
     hash = hashlib.md5(checkpoint.encode()).hexdigest()
     module_name = f"load_checkpoint_{hash}"
     output_directory = os.path.join(CACHE_PATH, "checkpoint", module_name)
@@ -26,9 +24,11 @@ def load_checkpoint(checkpoint, force_recompile=False):
 
     flags = [module_flag, header_search_path_flag]
 
+    flags += acceleration_flags()
+
     absolute_path = os.path.dirname(os.path.abspath(__file__))
     source = os.path.join(absolute_path, '../interface/inference/inference.cpp')
-    output_path = compile(source, module_name, flags, force_recompile=force_recompile)
+    output_path = compile(source, module_name, flags, force_recompile=force_recompile, verbose=verbose)
     module = load_module(module_name, output_path)
     return module
 

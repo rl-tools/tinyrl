@@ -1,4 +1,4 @@
-#include <rl_tools/operations/cpu.h>
+#include <rl_tools/operations/cpu_mux.h>
 
 #include <checkpoint.h>
 
@@ -13,7 +13,7 @@
 namespace rlt = rl_tools;
 
 
-using DEVICE = rlt::devices::DefaultCPU;
+using DEVICE = rlt::devices::DEVICE_FACTORY<>;
 
 DEVICE device;
 using MODEL_TYPE = decltype(policy::model);
