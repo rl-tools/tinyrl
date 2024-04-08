@@ -57,6 +57,9 @@ from tinyrl import load_checkpoint_from_path
 policy = load_checkpoint_from_path("pendulum_sac_checkpoint.h")
 action = policy.evaluate(observation) # Note that e.g. SAC's policies output mean and std (concatenated)
 ```
+# Custom C++ Enviroments
+
+To get the maximum performance you should rewrite your environment in C++. Don't be scared it is actually quite straightforward and similar to creating a Gym environment. For an example of a custom pendulum environment see [examples/custom_environment](./examples/custom_environment/README.MD) (just 105 lines of code).
 
 # Acceleration
 
