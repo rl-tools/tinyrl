@@ -46,5 +46,40 @@
             "env": {
             }
         },
+        {
+            "name": "Custom Environment Training",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/custom_environment/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+            }
+        },
+        {
+            "name": "Custom Environment Training (recompile, verbose)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/custom_environment/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": ""
+            }
+        },
+        {
+            "name": "Custom Environment Training (recompile, verbose, force mkl)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/custom_environment/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_FORCE_MKL": ""
+            }
+        },
     ]
 }

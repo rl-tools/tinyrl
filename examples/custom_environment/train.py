@@ -1,13 +1,15 @@
 from tinyrl import SAC
-import gymnasium as gym
+import os 
 
 seed = 0xf00d
-def env_factory():
-    env = gym.make("Pendulum-v1")
-    env.reset(seed=seed)
-    return env
 
-sac = SAC(env_factory)
+custom_environment = {
+    "path": os.path.dirname(os.path.abspath(__file__)),
+    "action_dim": 1,
+    "observation_dim": 3,
+}
+
+sac = SAC(custom_environment)
 state = sac.State(seed)
 
 # Training
@@ -15,11 +17,8 @@ finished = False
 while not finished:
     finished = state.step()
 
-# Save Checkpoint (so it can be loaded by inference.py)
-with open("pendulum_sac_checkpoint.h", "w") as f:
-    f.write(state.export_policy())
-
 # Inference
+import gymnasium as gym
 env_replay = gym.make("Pendulum-v1", render_mode="human")
 
 while True:
@@ -28,6 +27,7 @@ while True:
     while not finished:
         env_replay.render()
         action = state.action(observation)
+        action *= env_replay.env.env.env.max_torque # wlog. in RLtools the action is normalized to be in [-1, 1]
         observation, reward, terminated, truncated, _ = env_replay.step(action)
         finished = terminated or truncated
 

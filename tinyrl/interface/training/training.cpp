@@ -15,6 +15,8 @@
 
 #ifdef TINYRL_USE_PYTHON_ENVIRONMENT
 #include "../python_environment/operations_cpu.h"
+#else
+#include <environment.h>
 #endif
 
 #include <rl_tools/nn_models/sequential/operations_generic.h>
@@ -28,6 +30,11 @@
 
 namespace rlt = rl_tools;
 
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+
 using DEVICE = rlt::devices::DEVICE_FACTORY<>;
 using RNG = decltype(rlt::random::default_engine(typename DEVICE::SPEC::RANDOM{}));
 using TI = typename DEVICE::index_t;
@@ -38,13 +45,13 @@ using T = TINYRL_DTYPE;
 #ifdef TINYRL_USE_PYTHON_ENVIRONMENT
 constexpr TI OBSERVATION_DIM = TINYRL_OBSERVATION_DIM;
 constexpr TI ACTION_DIM = TINYRL_ACTION_DIM;
-constexpr bool ENABLE_EVALUATION=true;
 using ENVIRONMENT_SPEC = PythonEnvironmentSpecification<T, TI, OBSERVATION_DIM, ACTION_DIM>;
 using ENVIRONMENT = PythonEnvironment<ENVIRONMENT_SPEC>;
 #else
 using ENVIRONMENT = ENVIRONMENT_FACTORY<T, TI>;
 #endif
 
+constexpr bool ENABLE_EVALUATION = TINYRL_ENABLE_EVALUATION;
 constexpr TI EPISODE_STEP_LIMIT = TINYRL_EPISODE_STEP_LIMIT;
 
 
