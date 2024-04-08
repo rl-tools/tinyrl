@@ -5,7 +5,7 @@
             "name": "Pendulum SAC",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac.py",
+            "program": "examples/pendulum_sac/train.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -15,7 +15,7 @@
             "name": "Pendulum SAC (recompile, verbose)",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac.py",
+            "program": "examples/pendulum_sac/train.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -27,7 +27,7 @@
             "name": "Pendulum SAC (recompile, verbose, force mkl)",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac.py",
+            "program": "examples/pendulum_sac/train.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -37,10 +37,10 @@
             }
         },
         {
-            "name": "Load Checkpoint",
+            "name": "Pendulum SAC (inference)",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac_inference.py",
+            "program": "examples/pendulum_sac/inference.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
