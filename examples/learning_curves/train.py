@@ -71,9 +71,9 @@ def train_tinyrl(config, use_python_environment=True):
     return returns
 
 global_config = {
-    "n_seeds": 10,
-    "n_steps": 10000,
-    "evaluation_interval": 1000
+    "n_seeds": 100,
+    "n_steps": 20000,
+    "evaluation_interval": 100
 }
 
 if __name__ == "__main__":

@@ -117,5 +117,17 @@
                 "--output-dir", "figures",
             ]
         },
+        {
+            "name": "Learning Curves Analyze Remote",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/analyze.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--input-dir", "~/hpc_mount/tinyrl/results",
+                "--output-dir", "~/hpc_mount/tinyrl/figures",
+            ]
+        },
     ]
 }
