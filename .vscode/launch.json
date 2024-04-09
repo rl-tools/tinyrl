@@ -81,5 +81,41 @@
                 "TINYRL_FORCE_MKL": ""
             }
         },
+        {
+            "name": "Learning Curves Train cfg 3",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "3"
+            ]
+        },
+        {
+            "name": "Learning Curves Train cfg 13",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "13"
+            ]
+        },
+        {
+            "name": "Learning Curves Analyze",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/analyze.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--input-dir", "results",
+                "--output-dir", "figures",
+            ]
+        },
     ]
 }
