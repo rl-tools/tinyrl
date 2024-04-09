@@ -26,6 +26,7 @@ struct SAC_LOOP_CORE_PARAMETERS: rlt::rl::algorithms::sac::loop::core::DefaultPa
         static constexpr T TARGET_ENTROPY = $TARGET_ENTROPY;
         static constexpr bool ADAPTIVE_ALPHA = $ADAPTIVE_ALPHA;
     };
+    static constexpr TI N_ENVIRONMENTS = $N_ENVIRONMENTS;
     static constexpr TI N_WARMUP_STEPS = $N_WARMUP_STEPS;
     static constexpr TI STEP_LIMIT = $STEP_LIMIT;
     static constexpr TI REPLAY_BUFFER_CAP = $REPLAY_BUFFER_CAP;

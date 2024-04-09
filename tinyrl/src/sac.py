@@ -12,6 +12,7 @@ absolute_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def SAC(env_factory, # can be either a lambda that creates a new Gym-like environment, or a dict with a specification of a C++ environment: {"path": "path/to/environment", "action_dim": xx, "observation_dim": yy}
+    force_recompile=False,
     enable_evaluation=True,
     # Compile-time parameters:
     GAMMA = 0.99,
@@ -26,6 +27,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     IGNORE_TERMINATION = False,
     TARGET_ENTROPY = None,
     ADAPTIVE_ALPHA = True,
+    N_ENVIRONMENTS = 1,
     N_WARMUP_STEPS = None,
     STEP_LIMIT = 10000,
     REPLAY_BUFFER_CAP = None,
@@ -85,7 +87,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
 
     flags += [loop_core_config_search_path_flag, loop_core_config_flag]
 
-    output_path = compile(source, module_name, flags, force_recompile=new_config, **compile_time_parameters)
+    output_path = compile(source, module_name, flags, force_recompile=force_recompile or new_config, **compile_time_parameters)
 
     module = load_module(module_name, output_path)
     if use_python_environment:

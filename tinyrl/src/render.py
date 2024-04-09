@@ -4,12 +4,13 @@ import os
 def sanitize_values(kwargs):
     output = {}
     for key, value in kwargs.items():
-        if isinstance(value, str):
-            output[key] = value
-        elif isinstance(value, bool):
-            output[key] = "true" if value else "false"
-        else:
-            output[key] = str(value)
+        if key.isupper():
+            if isinstance(value, str):
+                output[key] = value
+            elif isinstance(value, bool):
+                output[key] = "true" if value else "false"
+            else:
+                output[key] = str(value)
     return output
 
 def render(template_path, output_path, **kwargs):
