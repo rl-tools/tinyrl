@@ -23,6 +23,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     cpp_std_flag = '-std=c++17' if not sys.platform.startswith('win') else '/std:c++17'
     optimization_flag = ('-O3' if not sys.platform.startswith('win') else '/O2') if enable_optimization else ''
     arch_flag = '-march=native' if not sys.platform.startswith('win') else '/arch:AVX2'
+    link_math_flag = '-lm' if not sys.platform.startswith('win') else ''
     fast_math_flag = '-ffast-math' if not sys.platform.startswith('win') else '/fp:fast'
     lto_flag = '' #'-flto' if not sys.platform.startswith('win') else '/GL'
     pic_flag = '-fPIC' if not sys.platform.startswith('win') else '/LD'
@@ -52,6 +53,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             cpp_std_flag,
             optimization_flag,
             arch_flag,
+            link_math_flag,
             fast_math_flag,
             link_stdlib_flag,
             lto_flag,
