@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tinyrl"
-version = "0.2.2"
+version = "0.2.4"
 authors = [
   { name="Jonas Eschmann", email="jonas.eschmann@gmail.com" },
 ]
@@ -25,6 +25,13 @@ dependencies = [
 mkl = [
   "mkl",
   "mkl-include"
+]
+onnx = [
+  "onnx"
+]
+tests = [
+  "onnx",
+  "torch"
 ]
 
 [tool.hatch.build]

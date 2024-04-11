@@ -9,6 +9,7 @@
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
+                // "TINYRL_COMPILER": "g++"
             }
         },
         {
@@ -128,6 +129,14 @@
                 "--input-dir", "~/hpc_mount/tinyrl/results",
                 "--output-dir", "~/hpc_mount/tinyrl/figures",
             ]
+        },
+        {
+            "name": "Test: PyTorch Import",
+            "type": "python",
+            "request": "launch",
+            "program": "tests/test_pytorch_import.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
         },
     ]
 }

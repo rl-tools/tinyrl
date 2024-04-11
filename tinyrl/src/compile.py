@@ -7,7 +7,11 @@ absolute_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def find_compiler():
-    compilers = ["clang++", "g++"] if (sys.platform in ["linux", "darwin"]) else "cl"
+    if "TINYRL_COMPILER" in os.environ:
+        return [os.environ["TINYRL_COMPILER"]]
+    unix_compilers = ["clang++", "g++"]
+    windows_compilers = ["cl"]
+    compilers = unix_compilers if (sys.platform in ["linux", "darwin"]) else windows_compilers
     compilers = [compiler for compiler in compilers if shutil.which(compiler) is not None]
     assert len(compilers) > 0, "No C++ compiler found. Please install clang, g++ or cl (MSVC)."
     return compilers
