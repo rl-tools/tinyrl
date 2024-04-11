@@ -28,39 +28,39 @@ void init(){
     }
 }
 
-pybind11::array_t<T> evaluate(const pybind11::array_t<T>& observation){
+pybind11::array_t<T> evaluate(const pybind11::array_t<T>& input){
     init();
-    pybind11::buffer_info observation_info = observation.request();
-    if (observation_info.format != pybind11::format_descriptor<T>::format() || observation_info.ndim != 1) {
-        throw std::runtime_error("Incompatible buffer format. Check the floating point type of the observation returned by env.step() and the one configured when building the TinyRL interface");
+    pybind11::buffer_info input_info = input.request();
+    if (input_info.format != pybind11::format_descriptor<T>::format() || input_info.ndim != 1) {
+        throw std::runtime_error("Incompatible buffer format. Check the floating point type of the input and the one configured when building the TinyRL interface");
     }
-    auto observation_data_ptr = static_cast<T*>(observation_info.ptr);
-    size_t num_elements = observation_info.shape[0];
+    auto input_data_ptr = static_cast<T*>(input_info.ptr);
+    size_t num_elements = input_info.shape[0];
     if(num_elements != MODEL_TYPE::INPUT_DIM){
-        throw std::runtime_error("Incompatible observation dimension. Check the dimension of the observation returned by env.step() and the one configured when building the TinyRL interface");
+        throw std::runtime_error("Incompatible input dimension. Check the dimension of the input and the one configured when building the TinyRL interface");
     }
-    rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, MODEL_TYPE::INPUT_DIM>> observation_rlt;
-    rlt::malloc(device, observation_rlt);
-    for(TI observation_i=0; observation_i<num_elements; observation_i++){
-        rlt::set(observation_rlt, 0, observation_i, observation_data_ptr[observation_i]);
+    rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, MODEL_TYPE::INPUT_DIM>> input_rlt;
+    rlt::malloc(device, input_rlt);
+    for(TI input_i=0; input_i<num_elements; input_i++){
+        rlt::set(input_rlt, 0, input_i, input_data_ptr[input_i]);
     }
-    rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, MODEL_TYPE::OUTPUT_DIM>> action_rlt;
-    rlt::malloc(device, action_rlt);
-    rlt::evaluate(device, policy::model, observation_rlt, action_rlt, buffer);
+    rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, MODEL_TYPE::OUTPUT_DIM>> output_rlt;
+    rlt::malloc(device, output_rlt);
+    rlt::evaluate(device, policy::model, input_rlt, output_rlt, buffer);
 
-    std::vector<T> action(MODEL_TYPE::OUTPUT_DIM);
+    std::vector<T> output(MODEL_TYPE::OUTPUT_DIM);
 
-    for (TI action_i = 0; action_i < MODEL_TYPE::OUTPUT_DIM; action_i++) {
-        action[action_i] = rlt::get(action_rlt, 0, action_i);
+    for (TI output_i = 0; output_i < MODEL_TYPE::OUTPUT_DIM; output_i++) {
+        output[output_i] = rlt::get(output_rlt, 0, output_i);
     }
 
-    rlt::free(device, observation_rlt);
-    rlt::free(device, action_rlt);
+    rlt::free(device, input_rlt);
+    rlt::free(device, output_rlt);
 
-    return pybind11::array_t<T>(MODEL_TYPE::OUTPUT_DIM, action.data());
+    return pybind11::array_t<T>(MODEL_TYPE::OUTPUT_DIM, output.data());
 }
 
 PYBIND11_MODULE(TINYRL_MODULE_NAME, m){
-    m.doc() = "TinyRL Policy Checkpoint";
-    m.def("evaluate", &evaluate, "Evaluate the policy");
+    m.doc() = "TinyRL Inference";
+    m.def("evaluate", &evaluate, "Evaluate the NN");
 }
