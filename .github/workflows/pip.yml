@@ -33,11 +33,11 @@ jobs:
     - name: Install package
       if: matrix.mkl == 'no'
       run: |
-        pip install -e .
+        pip install -e .[tests]
     - name: Install package
       if: matrix.mkl == 'yes'
       run: |
-        pip install -e .[mkl]
+        pip install -e .[mkl,tests]
     - name: Install test dependencies
       run: |
         pip install gymnasium pytest
