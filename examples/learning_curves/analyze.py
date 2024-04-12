@@ -44,6 +44,6 @@ if __name__ == "__main__":
     plt.xlabel("Steps")
     plt.ylabel("Returns")
     plt.legend()
-    plt.show()
+    plt.savefig(os.path.join(args.output_dir, "learning_curves.png"))
 
 

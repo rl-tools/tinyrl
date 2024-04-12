@@ -53,7 +53,7 @@ def train_tinyrl(config, use_python_environment=True):
 
     from tinyrl import SAC
     example_env = gym.make(config["environment_name"])
-    kwargs = {"STEP_LIMIT": config["n_steps"]}
+    kwargs = {"STEP_LIMIT": config["n_steps"], "ALPHA": 1, "ACTOR_BATCH_SIZE": 100, "CRITIC_BATCH_SIZE": 100, "OPTIMIZER_EPSILON": 1e-8}
     if use_python_environment:
         def env_factory():
             env = gym.make(config["environment_name"])

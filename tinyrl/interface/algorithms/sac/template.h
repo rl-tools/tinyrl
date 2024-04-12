@@ -39,6 +39,12 @@ struct SAC_LOOP_CORE_PARAMETERS: rlt::rl::algorithms::sac::loop::core::DefaultPa
     static constexpr auto CRITIC_ACTIVATION_FUNCTION = rlt::nn::activation_functions::ActivationFunction::$CRITIC_ACTIVATION_FUNCTION;
     static constexpr bool COLLECT_EPISODE_STATS = $COLLECT_EPISODE_STATS;
     static constexpr TI EPISODE_STATS_BUFFER_SIZE = $EPISODE_STATS_BUFFER_SIZE;
+    struct OPTIMIZER_PARAMETERS: rlt::nn::optimizers::adam::DEFAULT_PARAMETERS_TENSORFLOW<T>{
+        static constexpr T ALPHA = $OPTIMIZER_ALPHA;
+        static constexpr T BETA_1 = $OPTIMIZER_BETA_1;
+        static constexpr T BETA_2 = $OPTIMIZER_BETA_2;
+        static constexpr T EPSILON = $OPTIMIZER_EPSILON;
+    };
 };
 
 template <typename T, typename TI, typename RNG, typename ENVIRONMENT, TI T_EPISODE_STEP_LIMIT>

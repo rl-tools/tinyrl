@@ -39,7 +39,12 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     CRITIC_NUM_LAYERS = 3,
     CRITIC_ACTIVATION_FUNCTION = "RELU",
     COLLECT_EPISODE_STATS = True,
-    EPISODE_STATS_BUFFER_SIZE = 1000
+    EPISODE_STATS_BUFFER_SIZE = 1000,
+    # optimizer
+    OPTIMIZER_ALPHA=1e-3,
+    OPTIMIZER_BETA_1=0.9,
+    OPTIMIZER_BETA_2=0.999,
+    OPTIMIZER_EPSILON=1e-7,
     ):
 
     use_python_environment = type(env_factory) != dict
