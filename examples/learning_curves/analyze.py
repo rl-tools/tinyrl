@@ -13,8 +13,14 @@ if __name__ == "__main__":
 
     os.makedirs(args.output_dir, exist_ok=True)
     data = {}
-    for input_file in os.listdir(args.input_dir):
-        input_path = os.path.join(args.input_dir, input_file)
+    input_dir_contents = os.listdir(args.input_dir)
+    if len(input_dir_contents) >= 0 and os.path.isdir(os.path.join(args.input_dir, input_dir_contents[0])):
+        print(f"The input appears to contain dictionaries (assumed to be runs)")
+        run_dir = os.path.join(args.input_dir, sorted(input_dir_contents)[-1])
+    else:
+        run_dir = args.input_dir
+    for input_file in os.listdir(run_dir):
+        input_path = os.path.join(run_dir, input_file)
         print(f"Loading {input_path}")
         with open(input_path, 'rb') as f:
             run = pickle.load(f)
