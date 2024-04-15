@@ -45,6 +45,13 @@ if __name__ == "__main__":
         config = {"environment_name": args.environment, "library": args.library, "seed": args.seed, **global_config}
     run_name = f"{config['environment_name']}_{config['library']}_{config['seed']}"
     if config["library"] == "tinyrl":
+        print("Using TinyRL")
+        returns = sac.train_rltools(config)
+    elif config["library"] == "sb3":
+        print("Using Stable-Baselines3")
+        returns = sac.train_sb3(config)
+    elif config["library"] == "cleanrl":
+        print("Using CleanRL")
         returns = sac.train_rltools(config)
     elif config["library"] == "sb3":
         returns = sac.train_sb3(config)
