@@ -3,11 +3,18 @@ import numpy as np
 import os
 import sac
 
-global_config = {
-    "n_seeds": 10,
-    "n_steps": 10000,
-    "evaluation_interval": 1000
-}
+if "TINYRL_FULL_RUN" in os.environ:
+    global_config = {
+        "n_seeds": 100,
+        "n_steps": 20000,
+        "evaluation_interval": 100
+    }
+else:
+    global_config = {
+        "n_seeds": 10,
+        "n_steps": 10000,
+        "evaluation_interval": 1000
+    }
 
 if __name__ == "__main__":
     import argparse
