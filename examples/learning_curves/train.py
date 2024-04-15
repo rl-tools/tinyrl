@@ -4,6 +4,7 @@ import os
 import sac
 
 if "TINYRL_FULL_RUN" in os.environ:
+    print("Using full run config")
     global_config = {
         "n_seeds": 100,
         "n_steps": 20000,
