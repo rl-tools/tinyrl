@@ -4,6 +4,11 @@ import os
 import pickle
 import matplotlib.pyplot as plt
 
+library_lookup = {
+    "sb3": "Stable Baselines3",
+    "tinyrl": "TinyRL",
+    "cleanrl": "CleanRL"
+}
 
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
@@ -31,25 +36,22 @@ if __name__ == "__main__":
             data[config["library"]].append(returns)
     
     
-    returns_tinyrl = np.array(data["tinyrl"])
-    returns_sb3 = np.array(np.array(data["sb3"]))
+    plt.figure()
+    for library, returns in data.items():
+        print(f"Library: {library}, Runs: {len(returns)}")
+        returns = np.array(data[library])
 
-    returns_tinyrl_aggregate = returns_tinyrl.mean(axis=-1)
-    returns_sb3_aggregate = returns_sb3.mean(axis=-1)
+        returns_aggregate = returns.mean(axis=-1)
 
-    returns_tinyrl_mean = returns_tinyrl_aggregate.mean(axis=0)
-    returns_sb3_mean = returns_sb3_aggregate.mean(axis=0)
-    returns_tinyrl_std = returns_tinyrl_aggregate.std(axis=0)
-    returns_sb3_std = returns_sb3_aggregate.std(axis=0)
+        returns_mean = returns_aggregate.mean(axis=0)
+        returns_std = returns_aggregate.std(axis=0)
 
-    horizontal = range(0, config["n_steps"], config["evaluation_interval"])
-    plt.fill_between(horizontal, returns_tinyrl_mean - returns_tinyrl_std, returns_tinyrl_mean + returns_tinyrl_std, alpha=0.1)
-    plt.plot(horizontal, returns_tinyrl_mean, label="TinyRL")
-    plt.fill_between(horizontal, returns_sb3_mean - returns_sb3_std, returns_sb3_mean + returns_sb3_std, alpha=0.1)
-    plt.plot(horizontal, returns_sb3_mean, label="Stable Baselines3")
-    plt.xlabel("Steps")
-    plt.ylabel("Returns")
-    plt.legend()
+        horizontal = range(0, config["n_steps"], config["evaluation_interval"])
+        plt.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
+        plt.plot(horizontal, returns_mean, label=library_lookup[library])
+        plt.xlabel("Steps")
+        plt.ylabel("Returns")
+        plt.legend()
     plt.savefig(os.path.join(args.output_dir, "learning_curves.png"))
 
 
