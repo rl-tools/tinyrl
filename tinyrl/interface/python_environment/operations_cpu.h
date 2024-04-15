@@ -52,11 +52,14 @@ namespace rl_tools{
         for(TI action_i=0; action_i<SPEC::ACTION_DIM; action_i++){
             T current_low = low.at(action_i);
             T current_high = high.at(action_i);
-            env.action_space_offset[action_i] = (current_high + current_low)/2;
-            env.action_space_range[action_i] = (current_high - current_low)/2;
-#ifdef TINYRL_VERBOSE
-            std::cout << "Action dim: " << action_i << " low: " << current_low << " high: " << current_high << std::endl;
-#endif
+//             env.action_space_offset[action_i] = (current_high + current_low)/2;
+//             env.action_space_range[action_i] = (current_high - current_low)/2;
+// #ifdef TINYRL_VERBOSE
+//             std::cout << "Action dim: " << action_i << " low: " << current_low << " high: " << current_high << std::endl;
+// #endif
+            if(math::abs(device.math, current_low - (-1.0)) > 1e-6 || math::abs(device.math, current_high - 1.0) > 1e-6){
+                throw std::runtime_error("Incompatible action space limits. Limits: low " + std::to_string(current_low) + ", high " + std::to_string(current_high) + " (expected -1.0 and 1.0). You should use a RescaleActionV0(env, -1, 1) or equivalent.");
+            };
         }
     }
     template<typename DEVICE, typename SPEC>
@@ -87,7 +90,7 @@ namespace rl_tools{
         pybind11::buffer_info action_info = action_array.request();
         auto action_data_ptr = static_cast<T*>(action_info.ptr);
         for(size_t i=0; i<SPEC::ACTION_DIM; i++){
-            action_data_ptr[i] = get(action, 0, i) * env.action_space_range[i] + env.action_space_offset[i];
+            action_data_ptr[i] = get(action, 0, i); // * env.action_space_range[i] + env.action_space_offset[i];
         }
         auto result = env.environment->attr("step")(action_array);
         pybind11::tuple result_tuple = pybind11::cast<pybind11::tuple>(result);

@@ -1,5 +1,6 @@
 import os
 import gymnasium as gym
+from gymnasium.experimental.wrappers import RescaleActionV0
 from evaluate_policy import evaluate_policy
 import numpy as np
 
@@ -8,6 +9,13 @@ def scale_action(action, env):
 
 
 default_config = {}
+def env_factory_factory(config, **kwargs):
+    def env_factory(**kwargs):
+        env = gym.make(config["environment_name"], **kwargs)
+        env = RescaleActionV0(env, -1, 1) # wlog actions are normalized to [-1, 1] in RLtools
+        env.reset(seed=config["seed"])
+        return env
+    return env_factory
 
 def train_rltools(config, use_python_environment=True):
     custom_environment = {
@@ -15,16 +23,12 @@ def train_rltools(config, use_python_environment=True):
         "action_dim": 1,
         "observation_dim": 3,
     }
-
+    env_factory = env_factory_factory(config)
     from tinyrl import SAC
-    example_env = gym.make(config["environment_name"])
+    example_env = env_factory() 
     kwargs = {"STEP_LIMIT": config["n_steps"], "ALPHA": 1, "ACTOR_BATCH_SIZE": 100, "CRITIC_BATCH_SIZE": 100, "OPTIMIZER_EPSILON": 1e-8}
     if use_python_environment:
-        def env_factory():
-            env = gym.make(config["environment_name"])
-            env.reset(seed=config["seed"])
-            return env
-        sac = SAC(env_factory, force_recompile=True, **kwargs)
+        sac = SAC(env_factory, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
     else:
         sac = SAC(custom_environment, **kwargs)
     state = sac.State(config["seed"])
