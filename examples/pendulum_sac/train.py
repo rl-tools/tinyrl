@@ -1,7 +1,7 @@
 from tinyrl import SAC
 import gymnasium as gym
 
-seed = 0xf00d
+seed = 0x1337
 def env_factory():
     env = gym.make("Pendulum-v1")
     env.reset(seed=seed)
@@ -21,6 +21,8 @@ with open("pendulum_sac_checkpoint.h", "w") as f:
 
 # Inference
 env_replay = gym.make("Pendulum-v1", render_mode="human")
+low, high = env_replay.action_space.low, env_replay.action_space.high
+
 
 while True:
     observation, _ = env_replay.reset(seed=seed)
@@ -28,5 +30,6 @@ while True:
     while not finished:
         env_replay.render()
         action = state.action(observation)
+        action = (high - low) * (action + 1) / 2 + low # wlog actions are normalized to [-1, 1] in RLtools
         observation, reward, terminated, truncated, _ = env_replay.step(action)
         finished = terminated or truncated

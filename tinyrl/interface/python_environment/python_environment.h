@@ -32,4 +32,6 @@ struct PythonEnvironment{
     static constexpr TI OBSERVATION_DIM_PRIVILEGED = SPEC::OBSERVATION_DIM;
     static constexpr TI ACTION_DIM = SPEC::ACTION_DIM;
     pybind11::object* environment;
+    T action_space_range[ACTION_DIM];
+    T action_space_offset[ACTION_DIM];
 };

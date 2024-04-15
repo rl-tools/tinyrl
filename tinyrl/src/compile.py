@@ -32,6 +32,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     lto_flag = '' #'-flto' if not sys.platform.startswith('win') else '/GL'
     pic_flag = '-fPIC' if not sys.platform.startswith('win') else '/LD'
     link_stdlib_flag = '-stdlib=libc++' if sys.platform == 'darwin' else ''
+    verbose_flag = '-DTINYRL_VERBOSE' if verbose or "TINYRL_VERBOSE" in os.environ else ''
 
     # pybind_includes = subprocess.check_output(["python3", "-m", "pybind11", "--includes"]).decode().strip().split()
     pybind_includes = [f"-I{pybind11.get_include()}"]
@@ -60,6 +61,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             link_math_flag,
             fast_math_flag,
             link_stdlib_flag,
+            verbose_flag,
             lto_flag,
             *flags,
             *link_python_args,

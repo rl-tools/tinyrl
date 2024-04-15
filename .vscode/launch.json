@@ -21,7 +21,8 @@
             "justMyCode": false,
             "env": {
                 "TINYRL_FORCE_RECOMPILE": "",
-                "TINYRL_FORCE_COMPILE_VERBOSE": ""
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": ""
             }
         },
         {
@@ -34,6 +35,7 @@
             "env": {
                 "TINYRL_FORCE_RECOMPILE": "",
                 "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": "",
                 "TINYRL_FORCE_MKL": ""
             }
         },
