@@ -30,6 +30,3 @@ while True:
         action = state.action(observation)
         observation, reward, terminated, truncated, _ = env_replay.step(action)
         finished = terminated or truncated
-
-
-

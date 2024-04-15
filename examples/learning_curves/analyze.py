@@ -44,11 +44,13 @@ if __name__ == "__main__":
         returns_aggregate = returns.mean(axis=-1)
 
         returns_mean = returns_aggregate.mean(axis=0)
+        returns_median = np.median(returns_aggregate, axis=0)
         returns_std = returns_aggregate.std(axis=0)
 
         horizontal = range(0, config["n_steps"], config["evaluation_interval"])
         plt.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
-        plt.plot(horizontal, returns_mean, label=library_lookup[library])
+        # plt.plot(horizontal, returns_mean, label=library_lookup[library])
+        plt.plot(horizontal, returns_median, label=library_lookup[library])
         plt.xlabel("Steps")
         plt.ylabel("Returns")
         plt.legend()

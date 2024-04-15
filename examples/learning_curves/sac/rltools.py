@@ -5,6 +5,9 @@ from evaluate_policy import evaluate_policy
 def scale_action(action, env):
     return action * (env.action_space.high - env.action_space.low) / 2.0 + (env.action_space.high + env.action_space.low) / 2.0
 
+
+default_config = {}
+
 def train_rltools(config, use_python_environment=True):
     custom_environment = {
         "path": os.path.abspath("../custom_environment"),

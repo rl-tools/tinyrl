@@ -2,6 +2,8 @@ from evaluate_policy import evaluate_policy
 import gymnasium as gym
 import numpy as np
 
+default_config = {}
+
 def train_sb3(config):
     import os, random
     os.environ["CUDA_VISIBLE_DEVICES"] = ""

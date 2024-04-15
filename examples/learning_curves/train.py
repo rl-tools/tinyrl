@@ -3,6 +3,12 @@ import numpy as np
 import os
 import sac
 
+default_config_by_library = {
+    "tinyrl": sac.default_config_rltools,
+    "sb3": sac.default_config_sb3,
+    "cleanrl": sac.default_config_cleanrl
+}
+
 if "TINYRL_FULL_RUN" in os.environ:
     print("Using full run config")
     global_config = {
@@ -33,8 +39,9 @@ if __name__ == "__main__":
     for environment_name, library_configs in configs.items():
         for library_name, seeds in library_configs.items():
             for seed in seeds:
+                config_default = default_config_by_library[library_name]
                 config_diff = {"environment_name": environment_name, "library": library_name, "seed": seed}
-                config = {**global_config, **config_diff}
+                config = {**global_config, **config_default, **config_diff}
                 print(f"Config {flat_config_id}: {config_diff}")
                 flat_configs.append(config)
                 flat_config_id += 1
