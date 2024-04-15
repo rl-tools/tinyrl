@@ -22,14 +22,13 @@ with open("pendulum_sac_checkpoint.h", "w") as f:
 # Inference
 env_replay = gym.make("Pendulum-v1", render_mode="human")
 low, high = env_replay.action_space.low, env_replay.action_space.high
-
+half_range, offset = (high - low) / 2, (high + low) / 2
 
 while True:
     observation, _ = env_replay.reset(seed=seed)
     finished = False
     while not finished:
         env_replay.render()
-        action = state.action(observation)
-        action = (high - low) * (action + 1) / 2 + low # wlog actions are normalized to [-1, 1] in RLtools
+        action = state.action(observation) * half_range + offset # wlog actions are normalized to [-1, 1] in RLtools
         observation, reward, terminated, truncated, _ = env_replay.step(action)
         finished = terminated or truncated
