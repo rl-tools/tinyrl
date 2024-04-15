@@ -1,6 +1,7 @@
 import os
 import gymnasium as gym
 from evaluate_policy import evaluate_policy
+import numpy as np
 
 def scale_action(action, env):
     return action * (env.action_space.high - env.action_space.low) / 2.0 + (env.action_space.high + env.action_space.low) / 2.0
@@ -30,6 +31,6 @@ def train_rltools(config, use_python_environment=True):
     returns = []
     for step_i in range(config["n_steps"]):
         if step_i % config["evaluation_interval"] == 0:
-            returns.append(evaluate_policy(lambda observation: scale_action(state.action(observation), example_env), config))
+            returns.append(evaluate_policy(lambda observation: scale_action(np.tanh(state.action(observation)), example_env), config))
         state.step()
     return returns
