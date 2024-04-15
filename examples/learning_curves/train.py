@@ -4,9 +4,9 @@ import os
 import sac
 
 global_config = {
-    "n_seeds": 100,
-    "n_steps": 20000,
-    "evaluation_interval": 100
+    "n_seeds": 10,
+    "n_steps": 10000,
+    "evaluation_interval": 1000
 }
 
 if __name__ == "__main__":
@@ -52,10 +52,6 @@ if __name__ == "__main__":
         returns = sac.train_sb3(config)
     elif config["library"] == "cleanrl":
         print("Using CleanRL")
-        returns = sac.train_rltools(config)
-    elif config["library"] == "sb3":
-        returns = sac.train_sb3(config)
-    elif config["library"] == "cleanrl":
         returns = sac.train_cleanrl(config)
     else:
         raise ValueError(f"Unknown library: {config['library']}")

@@ -46,7 +46,9 @@ LOG_STD_MIN = -5
 
 
 class Actor(nn.Module):
-    def __init__(self, env, hidden_dim):
+    def __init__(self, env, config):
+        self.config = config
+        hidden_dim = config["hidden_dim"]
         super().__init__()
         self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod(), hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
@@ -65,8 +67,9 @@ class Actor(nn.Module):
         x = F.relu(self.fc2(x))
         mean = self.fc_mean(x)
         log_std = self.fc_logstd(x)
-        log_std = torch.tanh(log_std)
-        log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)  # From SpinUp / Denis Yarats
+        if self.config["spinning_up_log_std"]:
+            log_std = torch.tanh(log_std)
+            log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)  # From SpinUp / Denis Yarats
 
         return mean, log_std
 
@@ -97,7 +100,8 @@ def train_cleanrl(input_config):
         "policy_frequency": 1,
         "target_network_frequency": 1,
         "tau": 0.005,
-        "hidden_dim": 64
+        "hidden_dim": 64,
+        "spinning_up_log_std": False,
     }
     config = {**default_config, **input_config}
     import stable_baselines3 as sb3
@@ -113,7 +117,7 @@ def train_cleanrl(input_config):
 
     max_action = float(envs.single_action_space.high[0])
 
-    actor = Actor(envs, config["hidden_dim"]).to(device)
+    actor = Actor(envs, config).to(device)
     qf1 = SoftQNetwork(envs, config["hidden_dim"]).to(device)
     qf2 = SoftQNetwork(envs, config["hidden_dim"]).to(device)
     qf1_target = SoftQNetwork(envs, config["hidden_dim"]).to(device)
