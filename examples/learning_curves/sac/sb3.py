@@ -24,6 +24,6 @@ def train_sb3(config):
         def policy(observation):
             return model.predict(observation, deterministic=True)[0]
         current_returns = evaluate_policy(policy, config)
-        print(f"Step {evaluation_step_i * config['evaluation_interval']}/{config['n_steps']}: {np.mean(current_returns)}")
+        print(f"Step {evaluation_step_i * config['evaluation_interval']}/{config['n_steps']}: {np.mean(current_returns)}", flush=True)
         returns.append(current_returns)
     return returns
