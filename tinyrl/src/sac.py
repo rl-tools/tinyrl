@@ -1,9 +1,6 @@
-import os, sys, importlib
-
-from .compile import compile
-from .load_module import load_module
+import os
 from .render import render, sanitize_values
-from .accelerate import acceleration_flags
+from .training import compile_training
 
 from .. import CACHE_PATH
 
@@ -18,7 +15,8 @@ def get_time_limit(env):
     except:
         pass
     return max_episode_steps
-    
+
+
 
 def SAC(env_factory, # can be either a lambda that creates a new Gym-like environment, or a dict with a specification of a C++ environment: {"path": "path/to/environment", "action_dim": xx, "observation_dim": yy}
     verbose=False,
@@ -57,10 +55,8 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     OPTIMIZER_EPSILON=1e-7,
     ):
 
-    use_python_environment = type(env_factory) != dict
-    custom_environment_header_search_path = None if use_python_environment else env_factory["path"]
-    custom_environment_flag = '-I' + custom_environment_header_search_path if custom_environment_header_search_path is not None else ''
 
+    use_python_environment = type(env_factory) != dict
     if use_python_environment:
         example_env = env_factory()
         ACTION_DIM = example_env.action_space.shape[0]
@@ -77,18 +73,6 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
 
     module_name = 'tinyrl_sac'
 
-    use_python_environment_flag = '-DTINYRL_USE_PYTHON_ENVIRONMENT' if use_python_environment else ''
-    observation_dim_flag = f'-DTINYRL_OBSERVATION_DIM={example_env.observation_space.shape[0]}' if use_python_environment else ''
-    action_dim_flag = f'-DTINYRL_ACTION_DIM={ACTION_DIM}' if use_python_environment else ''
-    enable_evaluation_flag = '-DTINYRL_ENABLE_EVALUATION' if enable_evaluation else ''
-    module_flag = f'-DTINYRL_MODULE_NAME={module_name}'
-
-    flags = [use_python_environment_flag, custom_environment_flag, observation_dim_flag, action_dim_flag, enable_evaluation_flag, module_flag]
-
-
-    flags += acceleration_flags()
-
-    source = os.path.join(absolute_path, '../interface/training/training.cpp')
     config_template = os.path.join(absolute_path, '../interface/algorithms/sac/template.h')
 
     print('TinyRL Cache Path: ', CACHE_PATH) if verbose else None
@@ -102,12 +86,5 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     
     loop_core_config_search_path_flag = f'-I{render_output_directory}'
     loop_core_config_flag = "-DTINYRL_USE_LOOP_CORE_CONFIG"
-
-    flags += [loop_core_config_search_path_flag, loop_core_config_flag]
-
-    output_path = compile(source, module_name, flags, force_recompile=force_recompile or new_config, **compile_time_parameters)
-
-    module = load_module(module_name, output_path)
-    if use_python_environment:
-        module.set_environment_factory(env_factory)
-    return module
+    flags = [loop_core_config_search_path_flag, loop_core_config_flag]
+    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation)
