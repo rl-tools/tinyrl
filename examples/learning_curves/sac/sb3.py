@@ -16,7 +16,7 @@ def train_sb3(config):
     env = gym.make(config["environment_name"])
     env.reset(seed=config["seed"])
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
-        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[64, 64])
+        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]])
     model = SB3_SAC(policy_factory, env, learning_rate=1e-3, batch_size=100, buffer_size=config["n_steps"])
     returns = []
     for evaluation_step_i in range(config["n_steps"] // config["evaluation_interval"]):

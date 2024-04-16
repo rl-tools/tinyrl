@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 library_lookup = {
     "sb3": "Stable Baselines3",
-    "tinyrl": "TinyRL",
+    "tinyrl": "TinyRL / RLtools",
     "cleanrl": "CleanRL"
 }
 

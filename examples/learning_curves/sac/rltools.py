@@ -4,10 +4,6 @@ from gymnasium.experimental.wrappers import RescaleActionV0
 from evaluate_policy import evaluate_policy
 import numpy as np
 
-def scale_action(action, env):
-    return action * (env.action_space.high - env.action_space.low) / 2.0 + (env.action_space.high + env.action_space.low) / 2.0
-
-
 default_config = {}
 def env_factory_factory(config, **kwargs):
     def env_factory(**kwargs):
@@ -26,7 +22,7 @@ def train_rltools(config, use_python_environment=True):
     env_factory = env_factory_factory(config)
     from tinyrl import SAC
     example_env = env_factory() 
-    kwargs = {"STEP_LIMIT": config["n_steps"], "ALPHA": 1, "ACTOR_BATCH_SIZE": 100, "CRITIC_BATCH_SIZE": 100, "OPTIMIZER_EPSILON": 1e-8}
+    kwargs = {"STEP_LIMIT": config["n_steps"], "ALPHA": 1, "ACTOR_BATCH_SIZE": 100, "CRITIC_BATCH_SIZE": 100, "OPTIMIZER_EPSILON": 1e-8, "ACTOR_HIDDEN_DIM": config["hidden_dim"], "CRITIC_HIDDEN_DIM": config["hidden_dim"]}
     if use_python_environment:
         sac = SAC(env_factory, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
     else:
@@ -35,6 +31,6 @@ def train_rltools(config, use_python_environment=True):
     returns = []
     for step_i in range(config["n_steps"]):
         if step_i % config["evaluation_interval"] == 0:
-            returns.append(evaluate_policy(lambda observation: scale_action(np.tanh(state.action(observation)), example_env), config))
+            returns.append(evaluate_policy(lambda observation: np.tanh(state.action(observation)), config))
         state.step()
     return returns
