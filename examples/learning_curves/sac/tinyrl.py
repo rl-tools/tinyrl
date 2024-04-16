@@ -13,7 +13,7 @@ def env_factory_factory(config, **kwargs):
         return env
     return env_factory
 
-def train_rltools(config, use_python_environment=True):
+def train_tinyrl(config, use_python_environment=True):
     custom_environment = {
         "path": os.path.abspath("../custom_environment"),
         "action_dim": 1,
