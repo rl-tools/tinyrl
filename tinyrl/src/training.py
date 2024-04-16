@@ -4,13 +4,27 @@ from .compile import compile
 import os
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
-def compile_training(module_name, env_factory, flags, verbose=False, force_recompile=False, enable_evaluation=True): #either gym env or custom env spec
+def get_time_limit(env):
+    max_episode_steps = None
+    try:
+        max_episode_steps = env.spec.max_episode_steps
+    except:
+        pass
+    return max_episode_steps
+
+
+
+
+def compile_training(module_name, env_factory, flags, EPISODE_STEP_LIMIT=None, verbose=False, force_recompile=False, enable_evaluation=True): #either gym env or custom env spec
     use_python_environment = type(env_factory) != dict
     if use_python_environment:
         example_env = env_factory()
+        EPISODE_STEP_LIMIT = get_time_limit(example_env) if EPISODE_STEP_LIMIT is None else EPISODE_STEP_LIMIT
+    
+    if EPISODE_STEP_LIMIT is not None:
+        flags += [f'-DTINYRL_EPISODE_STEP_LIMIT={EPISODE_STEP_LIMIT}']
         
-    use_python_environment = example_env is not None
-    custom_environment_header_search_path = None if use_python_environment else example_env["path"]
+    custom_environment_header_search_path = None if use_python_environment else env_factory["path"]
     custom_environment_flag = '-I' + custom_environment_header_search_path if custom_environment_header_search_path is not None else ''
     use_python_environment_flag = '-DTINYRL_USE_PYTHON_ENVIRONMENT' if use_python_environment else ''
     observation_dim_flag = f'-DTINYRL_OBSERVATION_DIM={example_env.observation_space.shape[0]}' if use_python_environment else ''

@@ -191,5 +191,13 @@
             "console": "integratedTerminal",
             "justMyCode": false,
         },
+        {
+            "name": "Test: Multi Interface",
+            "type": "python",
+            "request": "launch",
+            "program": "tests/test_multi_interface.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+        },
     ]
 }

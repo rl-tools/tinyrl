@@ -4,14 +4,13 @@ from .load_module import load_module
 from .compile import compile
 from .accelerate import acceleration_flags
 
-def load_checkpoint_from_path(checkpoint_path, force_recompile=False, verbose=False):
+def load_checkpoint_from_path(checkpoint_path, interface_name="default", force_recompile=False, verbose=False):
     with open(checkpoint_path, "r") as f:
         checkpoint = f.read()
-    return load_checkpoint(checkpoint, force_recompile=force_recompile, verbose=verbose)
+    return load_checkpoint(checkpoint, interface_name="default", force_recompile=force_recompile, verbose=verbose)
 
-def load_checkpoint(checkpoint, force_recompile=False, verbose=False):
-    hash = hashlib.md5(checkpoint.encode()).hexdigest()
-    module_name = f"load_checkpoint_{hash}"
+def load_checkpoint(checkpoint, interface_name="default", force_recompile=False, verbose=False):
+    module_name = f"load_checkpoint_{interface_name}"
     output_directory = os.path.join(CACHE_PATH, "checkpoint", module_name)
     
     os.makedirs(output_directory, exist_ok=True)

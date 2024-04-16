@@ -1,9 +1,11 @@
-import os, sys, sysconfig, shutil, subprocess
+import os, sys, sysconfig, shutil, subprocess, re, keyword
 import pybind11
 from .. import CACHE_PATH
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
+def is_valid_module_name(s):
+    return bool(re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', s)) and not keyword.iskeyword(s)
 
 
 def find_compiler():
@@ -23,6 +25,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     Caches the compilation in /tmp/tinyrl/interface/{module}/
     Returns the path to the shared object.
     '''
+    assert(is_valid_module_name(module))
     shared_flag = '-shared' if not sys.platform.startswith('win') else '/LD'
     cpp_std_flag = '-std=c++17' if not sys.platform.startswith('win') else '/std:c++17'
     optimization_flag = ('-O3' if not sys.platform.startswith('win') else '/O2') if enable_optimization else ''

@@ -7,21 +7,11 @@ from .. import CACHE_PATH
 
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
-
-def get_time_limit(env):
-    max_episode_steps = None
-    try:
-        max_episode_steps = env.spec.max_episode_steps
-    except:
-        pass
-    return max_episode_steps
-
-
-
 def SAC(env_factory, # can be either a lambda that creates a new Gym-like environment, or a dict with a specification of a C++ environment: {"path": "path/to/environment", "action_dim": xx, "observation_dim": yy}
     verbose=False,
     force_recompile=False,
     enable_evaluation=True,
+    interface_name="default", # this is the namespace used for the compilation of the TinyRL interface (in a temporary directory) and should be unique if run in parallel. We don't choose a random uuid because it would invalidate the cache and require a re-compilation every time
     # Compile-time parameters:
     GAMMA = 0.99,
     ALPHA = 0.5,
@@ -54,14 +44,13 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     OPTIMIZER_BETA_2=0.999,
     OPTIMIZER_EPSILON=1e-7,
     ):
+    assert(interface_name )
 
 
     use_python_environment = type(env_factory) != dict
     if use_python_environment:
         example_env = env_factory()
         ACTION_DIM = example_env.action_space.shape[0]
-        EPISODE_STEP_LIMIT = get_time_limit(example_env) if EPISODE_STEP_LIMIT is None else EPISODE_STEP_LIMIT
-        assert(EPISODE_STEP_LIMIT is not None)
     else:
         ACTION_DIM = env_factory["action_dim"]
 
@@ -71,7 +60,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
 
     compile_time_parameters = sanitize_values(locals())
 
-    module_name = 'tinyrl_sac'
+    module_name = f'tinyrl_sac_{interface_name}'
 
     config_template = os.path.join(absolute_path, '../interface/algorithms/sac/template.h')
 
