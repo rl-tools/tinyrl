@@ -88,21 +88,23 @@ class Actor(nn.Module):
         return action, log_prob, mean
 
 default_config = {
-    "learning_starts": 100,
+    # "learning_starts": 100,
     "autotune": True,
     "alpha": 1,
-    "q_lr": 1e-3,
-    "batch_size": 100,
-    "policy_lr": 1e-3,
+    # "q_lr": 1e-3,
+    # "batch_size": 100,
+    # "policy_lr": 1e-3,
     "gamma": 0.99,
     "policy_frequency": 1,
     "target_network_frequency": 1,
     "tau": 0.005,
-    "hidden_dim": 64,
+    # "hidden_dim": 64,
     "spinning_up_log_std": False,
 }
 
 def train_cleanrl(config):
+    config["q_lr"] = config["learning_rate"]
+    config["policy_lr"] = config["learning_rate"]
     import stable_baselines3 as sb3
     random.seed(config["seed"])
     np.random.seed(config["seed"])

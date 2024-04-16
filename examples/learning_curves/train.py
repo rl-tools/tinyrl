@@ -18,13 +18,17 @@ environment_configs = {
             "n_seeds": 100 if full_run else 10,
             "n_steps": 20000,
             "evaluation_interval": 100,
-            "hidden_dim": 64
+            "hidden_dim": 64,
+            "learning_rate": 1e-3,
+            "learning_starts": 100,
+            "batch_size": 100,
         },
         "Hopper-v4": {
-            "n_seeds": 100,
-            "n_steps": 20000,
-            "evaluation_interval": 100,
-            "hidden_dim": 64
+            "n_seeds": 10,
+            "n_steps": 1e6,
+            "evaluation_interval": 1000,
+            "hidden_dim": 256,
+            "batch_size": 256,
         }
     }
 }
