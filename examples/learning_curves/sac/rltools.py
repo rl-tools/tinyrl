@@ -31,6 +31,6 @@ def train_rltools(config, use_python_environment=True):
     returns = []
     for step_i in range(config["n_steps"]):
         if step_i % config["evaluation_interval"] == 0:
-            returns.append(evaluate_policy(lambda observation: np.tanh(state.action(observation)), config))
+            returns.append(evaluate_policy(lambda observation: np.tanh(state.action(observation)), config, env_factory=env_factory))
         state.step()
     return returns
