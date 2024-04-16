@@ -27,10 +27,10 @@ environment_configs = {
             "n_seeds": 10,
             "n_steps": 1000000,
             "evaluation_interval": 1000,
-            "hidden_dim": 256,
+            "hidden_dim": 64,
             "learning_rate": 1e-3,
             "learning_starts": 10000,
-            "batch_size": 256,
+            "batch_size": 128,
         }
     }
 }

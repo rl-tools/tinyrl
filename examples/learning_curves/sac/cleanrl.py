@@ -11,7 +11,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import tyro
 from stable_baselines3.common.buffers import ReplayBuffer
 
 from evaluate_policy import evaluate_policy
@@ -22,8 +21,6 @@ def make_env(env_id, seed):
         env.action_space.seed(seed)
         return env
     return thunk
-
-
 
 # ALGO LOGIC: initialize agent here:
 class SoftQNetwork(nn.Module):

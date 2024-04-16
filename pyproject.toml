@@ -33,6 +33,11 @@ tests = [
   "onnx",
   "torch"
 ]
+learning-curves = [
+  "stable-baselines3",
+  "torch",
+  "gymnasium[mujoco]",
+]
 
 [tool.hatch.build]
 include = [

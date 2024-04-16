@@ -11,7 +11,17 @@ from .. import CACHE_PATH
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
 
+def get_time_limit(env):
+    max_episode_steps = None
+    try:
+        max_episode_steps = env.spec.max_episode_steps
+    except:
+        pass
+    return max_episode_steps
+    
+
 def SAC(env_factory, # can be either a lambda that creates a new Gym-like environment, or a dict with a specification of a C++ environment: {"path": "path/to/environment", "action_dim": xx, "observation_dim": yy}
+    verbose=False,
     force_recompile=False,
     enable_evaluation=True,
     # Compile-time parameters:
@@ -31,7 +41,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     N_WARMUP_STEPS = None,
     STEP_LIMIT = 10000,
     REPLAY_BUFFER_CAP = None,
-    EPISODE_STEP_LIMIT = 200,
+    EPISODE_STEP_LIMIT = None,
     ACTOR_HIDDEN_DIM = 64,
     ACTOR_NUM_LAYERS = 3,
     ACTOR_ACTIVATION_FUNCTION = "RELU",
@@ -54,6 +64,8 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     if use_python_environment:
         example_env = env_factory()
         ACTION_DIM = example_env.action_space.shape[0]
+        EPISODE_STEP_LIMIT = get_time_limit(example_env) if EPISODE_STEP_LIMIT is None else EPISODE_STEP_LIMIT
+        assert(EPISODE_STEP_LIMIT is not None)
     else:
         ACTION_DIM = env_factory["action_dim"]
 
@@ -79,6 +91,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     source = os.path.join(absolute_path, '../interface/training/training.cpp')
     config_template = os.path.join(absolute_path, '../interface/algorithms/sac/template.h')
 
+    print('TinyRL Cache Path: ', CACHE_PATH) if verbose else None
     render_output_directory = os.path.join(CACHE_PATH, 'template', module_name)
     
     os.makedirs(render_output_directory, exist_ok=True)
