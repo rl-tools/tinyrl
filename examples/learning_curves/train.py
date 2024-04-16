@@ -34,7 +34,6 @@ if __name__ == "__main__":
     import pickle
     configs = {
         "Pendulum-v1": {
-        # "Hopper-v4": {
             "tinyrl": list(range(global_config["n_seeds"])),
             "sb3": list(range(global_config["n_seeds"])),
             "cleanrl": list(range(global_config["n_seeds"]))
