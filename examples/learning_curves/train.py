@@ -25,9 +25,11 @@ environment_configs = {
         },
         "Hopper-v4": {
             "n_seeds": 10,
-            "n_steps": 1e6,
+            "n_steps": 1000000,
             "evaluation_interval": 1000,
             "hidden_dim": 256,
+            "learning_rate": 1e-3,
+            "learning_starts": 10000,
             "batch_size": 256,
         }
     }
