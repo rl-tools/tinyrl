@@ -12,28 +12,29 @@ default_config_by_library = {
 if "TINYRL_FULL_RUN" in os.environ:
     print("Using full run config")
     global_config = {
-        "n_seeds": 100,
-        "n_steps": 20000,
-        "evaluation_interval": 100,
+        "n_seeds": 10,
+        "n_steps": 1000000,
+        "evaluation_interval": 1000,
     }
 else:
     global_config = {
         "n_seeds": 10,
-        "n_steps": 10000,
+        "n_steps": 1000000,
         "evaluation_interval": 1000,
     }
 
 global_config = {
     **global_config,
-    # "hidden_dim": 256
-    "hidden_dim": 64
+    "hidden_dim": 256
+    # "hidden_dim": 64
 }
 
 if __name__ == "__main__":
     import argparse
     import pickle
     configs = {
-        "Pendulum-v1": {
+        # "Pendulum-v1": {
+        "Hopper-v4": {
             "tinyrl": list(range(global_config["n_seeds"])),
             "sb3": list(range(global_config["n_seeds"])),
             "cleanrl": list(range(global_config["n_seeds"]))
