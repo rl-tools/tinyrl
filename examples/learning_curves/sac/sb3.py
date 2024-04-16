@@ -23,5 +23,7 @@ def train_sb3(config):
         model.learn(total_timesteps=config["evaluation_interval"], reset_num_timesteps=False)
         def policy(observation):
             return model.predict(observation, deterministic=True)[0]
-        returns.append(evaluate_policy(policy, config))
+        current_returns = evaluate_policy(policy, config)
+        print(f"Step {evaluation_step_i * config['evaluation_interval']}/{config['n_steps']}: {np.mean(current_returns)}")
+        returns.append(current_returns)
     return returns
