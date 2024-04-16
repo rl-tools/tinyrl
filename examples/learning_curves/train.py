@@ -44,17 +44,20 @@ library_configs = {
     }
 }
 
-def flatten_configs():
+def flatten_configs(algorithm_filter=None, environment_filter=None, library_filter=None):
     flat_configs = []
     flat_config_id = 0
     for algorithm, environment_library_configs in library_configs.items():
-        for environment_name, current_library_configs in environment_library_configs.items():
-            for library_name, config in current_library_configs.items():
-                for seed in range(config["seed_offset"] if "seed_offset" in config else 0, config["n_seeds"]):
-                    config_diff = {"algorithm": algorithm, "environment_name": environment_name, "library": library_name, "seed": seed}
-                    config = {**config, **config_diff}
-                    flat_configs.append(config)
-                    flat_config_id += 1
+        if algorithm_filter is None or algorithm == algorithm_filter:
+            for environment_name, current_library_configs in environment_library_configs.items():
+                if environment_filter is None or environment_name == environment_filter:
+                    for library_name, config in current_library_configs.items():
+                        if library_filter is None or library_name == library_filter:
+                            for seed in range(config["seed_offset"] if "seed_offset" in config else 0, config["n_seeds"]):
+                                config_diff = {"algorithm": algorithm, "environment_name": environment_name, "library": library_name, "seed": seed}
+                                config = {**config, **config_diff}
+                                flat_configs.append(config)
+                                flat_config_id += 1
     return flat_configs
 
 if __name__ == "__main__":
@@ -65,8 +68,12 @@ if __name__ == "__main__":
     parser.add_argument("--list-configs", action="store_true")
     parser.add_argument("--config", type=int, required=True)
     parser.add_argument("--output-dir", type=str, required=True)
+    parser.add_argument("--algorithm", type=str, default=None)
+    parser.add_argument("--environment", type=str, default=None)
+    parser.add_argument("--library", type=str, default=None)
+
     args = parser.parse_args()
-    flat_configs = flatten_configs()
+    flat_configs = flatten_configs(algorithm_filter=args.algorithm, environment_filter=args.environment, library_filter=args.library)
     print("Number of configs: ", len(flat_configs))
     if args.list_configs:
         for flat_config_id, config in enumerate(flat_configs):

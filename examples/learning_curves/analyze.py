@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 
 library_lookup = {
     "sb3": "Stable Baselines3",
+    "cleanrl": "CleanRL",
     "tinyrl": "TinyRL / RLtools",
-    "cleanrl": "CleanRL"
 }
 
 if __name__ == "__main__":
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     
     
     plt.figure()
-    for library, returns in data.items():
+    for library, returns in sorted(data.items(), key=lambda x: list(library_lookup.keys()).index(x[0])):
         print(f"Library: {library}, Runs: {len(returns)}")
         returns = np.array(data[library])
 
