@@ -4,7 +4,8 @@ from gymnasium.experimental.wrappers import RescaleActionV0
 from evaluate_policy import evaluate_policy
 import numpy as np
 
-default_config = {}
+default_config = {
+}
 def env_factory_factory(config, **kwargs):
     def env_factory(**kwargs):
         env = gym.make(config["environment_name"], **kwargs)
@@ -31,12 +32,13 @@ def train_tinyrl(config, use_python_environment=True):
         "OPTIMIZER_EPSILON": 1e-8, # PyTorch default
         "ACTOR_HIDDEN_DIM": config["hidden_dim"],
         "CRITIC_HIDDEN_DIM": config["hidden_dim"],
-        "N_WARMUP_STEPS": config["learning_starts"]
+        "N_WARMUP_STEPS": config["learning_starts"],
     }
+    interface_name = str(config["seed"])
     if use_python_environment:
-        sac = SAC(env_factory, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
+        sac = SAC(env_factory, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
     else:
-        sac = SAC(custom_environment, **kwargs)
+        sac = SAC(custom_environment, interface_name=interface_name, **kwargs)
     state = sac.State(config["seed"])
     returns = []
     for step_i in range(config["n_steps"]):
