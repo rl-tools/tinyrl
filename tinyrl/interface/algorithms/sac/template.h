@@ -26,6 +26,8 @@ namespace TINYRL_MODULE_NAME{
             static constexpr bool IGNORE_TERMINATION = $IGNORE_TERMINATION; 
             static constexpr T TARGET_ENTROPY = $TARGET_ENTROPY;
             static constexpr bool ADAPTIVE_ALPHA = $ADAPTIVE_ALPHA;
+            static constexpr T ACTION_LOG_STD_LOWER_BOUND = $ACTION_LOG_STD_LOWER_BOUND;
+            static constexpr T ACTION_LOG_STD_UPPER_BOUND = $ACTION_LOG_STD_UPPER_BOUND;
         };
         static constexpr TI N_ENVIRONMENTS = $N_ENVIRONMENTS;
         static constexpr TI N_WARMUP_STEPS = $N_WARMUP_STEPS;

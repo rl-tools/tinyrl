@@ -25,6 +25,8 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     IGNORE_TERMINATION = False,
     TARGET_ENTROPY = None,
     ADAPTIVE_ALPHA = True,
+    ACTION_LOG_STD_LOWER_BOUND=-20,
+    ACTION_LOG_STD_UPPER_BOUND=2,
     N_ENVIRONMENTS = 1,
     N_WARMUP_STEPS = None,
     STEP_LIMIT = 10000,
