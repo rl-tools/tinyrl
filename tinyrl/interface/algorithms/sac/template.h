@@ -9,9 +9,10 @@ namespace TINYRL_MODULE_NAME{
 
     namespace rlt = rl_tools;
 
+    // This should stay in sync with the parameters in https://github.com/rl-tools/rl-tools/blob/a98bc461f7ebfed0ba71c653216edec6d9334b78/include/rl_tools/rl/algorithms/sac/loop/core/config.h#L18
     template <typename T, typename TI, typename ENVIRONMENT, TI T_EPISODE_STEP_LIMIT>
     struct SAC_LOOP_CORE_PARAMETERS: rlt::rl::algorithms::sac::loop::core::DefaultParameters<T, TI, ENVIRONMENT>{
-        struct SAC_PARAMETERS {
+        struct SAC_PARAMETERS{
             static constexpr T GAMMA = $GAMMA;
             static constexpr T ALPHA = $ALPHA;
             static constexpr TI ACTOR_BATCH_SIZE = $ACTOR_BATCH_SIZE;

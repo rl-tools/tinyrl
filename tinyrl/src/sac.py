@@ -13,6 +13,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     enable_evaluation=True,
     interface_name="default", # this is the namespace used for the compilation of the TinyRL interface (in a temporary directory) and should be unique if run in parallel. We don't choose a random uuid because it would invalidate the cache and require a re-compilation every time
     # Compile-time parameters:
+    # Same set of parameters as: rl::algorithms::td3::DefaultParameters
     GAMMA = 0.99,
     ALPHA = 0.5,
     ACTOR_BATCH_SIZE = 100, #32,
@@ -27,6 +28,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     ADAPTIVE_ALPHA = True,
     ACTION_LOG_STD_LOWER_BOUND=-20,
     ACTION_LOG_STD_UPPER_BOUND=2,
+    # Same set of parameters as rl::algorithms::sac::loop::core::DefaultParameters
     N_ENVIRONMENTS = 1,
     N_WARMUP_STEPS = None,
     STEP_LIMIT = 10000,
@@ -49,6 +51,7 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     assert(interface_name )
 
 
+    # The action dim is needed to set the default target entropy
     use_python_environment = type(env_factory) != dict
     if use_python_environment:
         example_env = env_factory()

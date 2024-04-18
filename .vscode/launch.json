@@ -5,7 +5,7 @@
             "name": "Pendulum SAC",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac/train.py",
+            "program": "examples/pendulum/sac/train.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -16,7 +16,7 @@
             "name": "Pendulum SAC (recompile, verbose)",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac/train.py",
+            "program": "examples/pendulum/sac/train.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -29,7 +29,7 @@
             "name": "Pendulum SAC (recompile, verbose, force mkl)",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac/train.py",
+            "program": "examples/pendulum/sac/train.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -43,7 +43,7 @@
             "name": "Pendulum SAC (inference)",
             "type": "python",
             "request": "launch",
-            "program": "examples/pendulum_sac/inference.py",
+            "program": "examples/pendulum/sac/inference.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {
@@ -54,6 +54,54 @@
             "type": "python",
             "request": "launch",
             "program": "examples/custom_environment/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+            }
+        },
+        {
+            "name": "Pendulum TD3",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/td3/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                // "TINYRL_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "Pendulum TD3 (recompile, verbose)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/td3/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": ""
+            }
+        },
+        {
+            "name": "Pendulum TD3 (recompile, verbose, force mkl)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/td3/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": "",
+                "TINYRL_FORCE_MKL": ""
+            }
+        },
+        {
+            "name": "Pendulum TD3 (inference)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/td3/inference.py",
             "console": "integratedTerminal",
             "justMyCode": false,
             "env": {

@@ -1,7 +1,6 @@
-from tinyrl import SAC
+from tinyrl import TD3
 import gymnasium as gym
 from gymnasium.experimental.wrappers import RescaleActionV0
-import numpy as np
 
 seed = 0x1337
 def env_factory(**kwargs):
@@ -10,8 +9,8 @@ def env_factory(**kwargs):
     env.reset(seed=seed)
     return env
 
-sac = SAC(env_factory)
-state = sac.State(seed)
+td3 = TD3(env_factory)
+state = td3.State(seed)
 
 # Training
 finished = False
@@ -19,7 +18,7 @@ while not finished:
     finished = state.step()
 
 # Save Checkpoint (so it can be loaded by inference.py)
-with open("pendulum_sac_checkpoint.h", "w") as f:
+with open("pendulum_td3_checkpoint.h", "w") as f:
     f.write(state.export_policy())
 
 # Inference
@@ -32,7 +31,7 @@ while True:
     current_return = 0
     while not finished:
         env_replay.render()
-        action = np.tanh(state.action(observation)) # SAC policy outputs unsquashed actions (for sampling during training), more info: https://github.com/rl-tools/rl-tools/blob/72a59eabf4038502c3be86a4f772bd72526bdcc8/TODO.md?plain=1#L22
+        action = state.action(observation)
         observation, reward, terminated, truncated, _ = env_replay.step(action)
         current_return += reward
         finished = terminated or truncated

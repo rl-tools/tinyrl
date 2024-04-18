@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     config = flat_configs[args.config]
     print(f"Using config {args.config}: {config}")
-    run_name = f"{config['algorithm']}_{config['environment_name']}_{config['library']}_{config['seed']}"
+    run_name = f"{config['algorithm']}_{config['environment_name']}_{config['library']}_{config['seed']:03d}"
     if config["library"] == "tinyrl":
         print("Using TinyRL")
         returns = sac.train_tinyrl(config)
