@@ -19,6 +19,7 @@ if __name__ == "__main__":
 
     os.makedirs(args.output_dir, exist_ok=True)
     data = {}
+    configs = {}
     input_dir_contents = os.listdir(args.input_dir)
     if len(input_dir_contents) >= 0 and os.path.isdir(os.path.join(args.input_dir, input_dir_contents[0])):
         print(f"The input appears to contain dictionaries (assumed to be runs)")
@@ -35,11 +36,13 @@ if __name__ == "__main__":
             if config["library"] not in data:
                 data[config["library"]] = []
             data[config["library"]].append(returns)
+            configs[config["library"]] = config
     
     
     plt.figure()
     for library, returns in sorted(data.items(), key=lambda x: list(library_lookup.keys()).index(x[0])):
         print(f"Library: {library}, Runs: {len(returns)}")
+        print(f"Config: {configs[library]}")
         returns = np.array(data[library])
 
         returns_aggregate = returns.mean(axis=-1)
@@ -51,7 +54,8 @@ if __name__ == "__main__":
         horizontal = range(0, config["n_steps"], config["evaluation_interval"])
         plt.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
         # plt.plot(horizontal, returns_mean, label=library_lookup[library])
-        plt.plot(horizontal, returns_median, label=library_lookup[library])
+        label = f"{library_lookup[library]} (final mean: {returns_mean[-1]:.2f})"
+        plt.plot(horizontal, returns_median, label=label)
         plt.xlabel("Steps")
         plt.ylabel("Returns")
         plt.legend()

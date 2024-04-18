@@ -36,7 +36,7 @@ def train_tinyrl(config, use_python_environment=True):
     }
     interface_name = str(config["seed"])
     if use_python_environment:
-        sac = SAC(env_factory, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
+        sac = SAC(env_factory, enable_evaluation=False, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
     else:
         sac = SAC(custom_environment, interface_name=interface_name, **kwargs)
     state = sac.State(config["seed"])

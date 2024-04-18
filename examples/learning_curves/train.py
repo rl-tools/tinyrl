@@ -32,6 +32,15 @@ environment_configs = {
             "learning_rate": 3e-4,
             "learning_starts": 10000,
             "batch_size": 128,
+        },
+        "Ant-v4": {
+            "n_seeds": 30 if full_run else 10,
+            "n_steps": 1000000 if full_run else 100000,
+            "evaluation_interval": 10000,
+            "hidden_dim": 256,
+            "learning_rate": 3e-4,
+            "learning_starts": 10000,
+            "batch_size": 256,
         }
     }
 }
@@ -47,7 +56,14 @@ library_configs = {
         "Hopper-v4": {
             "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
             "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]}
+            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
+            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
+        },
+        "Ant-v4": {
+            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Ant-v4"]},
+            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Ant-v4"]},
+            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Ant-v4"]},
+            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Ant-v4"]}
         }
     }
 }

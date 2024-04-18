@@ -256,6 +256,45 @@
             ]
         },
         {
+            "name": "Learning Curves Train cfg 3 (Ant-v4)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "3",
+                "--environment", "Ant-v4",
+            ]
+        },
+        {
+            "name": "Learning Curves Train cfg 13 (Ant-v4)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "13",
+                "--environment", "Ant-v4",
+            ]
+        },
+        {
+            "name": "Learning Curves Train cfg 23 (Ant-v4)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "23",
+                "--environment", "Ant-v4",
+            ]
+        },
+        {
             "name": "Learning Curves Analyze",
             "type": "python",
             "request": "launch",
