@@ -8,6 +8,7 @@ library_lookup = {
     "sb3": "Stable Baselines3",
     "cleanrl": "CleanRL",
     "tinyrl": "TinyRL / RLtools",
+    "sbx": "SBX",
 }
 
 if __name__ == "__main__":

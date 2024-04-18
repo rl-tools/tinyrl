@@ -133,6 +133,42 @@
             }
         },
         {
+            "name": "Learning Curves Train cfg 0",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "0"
+            ]
+        },
+        {
+            "name": "Learning Curves Train cfg 1",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "1"
+            ]
+        },
+        {
+            "name": "Learning Curves Train cfg 2",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "2"
+            ]
+        },
+        {
             "name": "Learning Curves Train cfg 3",
             "type": "python",
             "request": "launch",
@@ -166,6 +202,18 @@
             "args": [
                 "--output-dir", "results",
                 "--config", "23"
+            ]
+        },
+        {
+            "name": "Learning Curves Train cfg 33",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "33"
             ]
         },
         {

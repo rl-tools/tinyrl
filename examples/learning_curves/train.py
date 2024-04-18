@@ -6,7 +6,8 @@ import sac
 default_config_by_library = {
     "tinyrl": sac.default_config_tinyrl,
     "sb3": sac.default_config_sb3,
-    "cleanrl": sac.default_config_cleanrl
+    "cleanrl": sac.default_config_cleanrl,
+    "sbx": sac.default_config_sbx
 }
 
 full_run = "TINYRL_FULL_RUN" in os.environ
@@ -15,9 +16,9 @@ full_run = "TINYRL_FULL_RUN" in os.environ
 environment_configs = {
     "SAC": {
         "Pendulum-v1": {
-            "n_seeds": 100 if full_run else 10,
+            "n_seeds": 10 if full_run else 10,
             "n_steps": 20000,
-            "evaluation_interval": 100,
+            "evaluation_interval": 1000,
             "hidden_dim": 64,
             "learning_rate": 1e-3,
             "learning_starts": 100,
@@ -40,7 +41,8 @@ library_configs = {
         "Pendulum-v1": {
             "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Pendulum-v1"]},
             "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Pendulum-v1"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
+            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
+            "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
         },
         "Hopper-v4": {
             "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
@@ -98,6 +100,9 @@ if __name__ == "__main__":
     elif config["library"] == "cleanrl":
         print("Using CleanRL")
         returns = sac.train_cleanrl(config)
+    elif config["library"] == "sbx":
+        print("Using SBX")
+        returns = sac.train_sbx(config)
     else:
         raise ValueError(f"Unknown library: {config['library']}")
     returns = np.array(returns)
