@@ -18,7 +18,7 @@ environment_configs = {
         "Pendulum-v1": {
             "n_seeds": 100 if full_run else 10,
             "n_steps": 20000,
-            "evaluation_interval": 1000,
+            "evaluation_interval": 100,
             "hidden_dim": 64,
             "learning_rate": 1e-3,
             "learning_starts": 100,
