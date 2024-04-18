@@ -108,7 +108,7 @@ if __name__ == "__main__":
     print(f"Using config {args.config}: {config}")
     run_name = f"{config['algorithm']}_{config['environment_name']}_{config['library']}_{config['seed']:03d}"
     if config["library"] == "tinyrl":
-        print("Using TinyRL")
+        print("Using TinyRL", flush=True)
         returns = sac.train_tinyrl(config)
     elif config["library"] == "sb3":
         print("Using Stable-Baselines3")

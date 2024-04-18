@@ -84,7 +84,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             old_command_string = f.read()
     if old_command_string is None or (not old_command_string in command_strings) or not os.path.exists(output_path) or force_recompile or "TINYRL_FORCE_RECOMPILE" in os.environ:
         for compiler, cmd, command_string in zip(compilers, cmds, command_strings):
-            print(f"Compiling the TinyRL interface...")
+            print(f"Compiling the TinyRL interface...", flush=True)
             verbose_actual = verbose or "TINYRL_FORCE_COMPILE_VERBOSE" in os.environ
             run_kwargs = {} if verbose_actual else {"capture_output": True, "text": True}
             result = subprocess.run(command_string, check=False, shell=True, **run_kwargs)
@@ -98,8 +98,8 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
                 raise Exception(f"Failed to compile the TinyRL interface using {compiler}.")
             with open(cmd_path, "w") as f:
                 f.write(command_string)
-            print(f"Finished compiling the TinyRL interface.")
+            print(f"Finished compiling the TinyRL interface.", flush=True)
             break
     else:
-        print("Using cached TinyRL interface.")
+        print("Using cached TinyRL interface.", flush=True)
     return output_path
