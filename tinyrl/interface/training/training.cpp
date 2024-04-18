@@ -119,7 +119,8 @@ namespace TINYRL_MODULE_NAME{
             for(TI observation_i=0; observation_i<num_elements; observation_i++){
                 rlt::set(observation_rlt, 0, observation_i, observation_data_ptr[observation_i]);
             }
-            rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, decltype(rlt::get_actor(*this))::OUTPUT_DIM>> action_distribution; //2x for mean and std
+            using ACTOR_TYPE = rlt::utils::typing::remove_reference<decltype(rlt::get_actor(*this))>::type;
+            rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, ACTOR_TYPE::OUTPUT_DIM>> action_distribution; //2x for mean and std
             rlt::malloc(device, action_distribution);
             rlt::evaluate(device, rlt::get_actor(*this), observation_rlt, action_distribution, this->actor_deterministic_evaluation_buffers);
             rlt::free(device, observation_rlt);
