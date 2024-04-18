@@ -16,7 +16,7 @@ full_run = "TINYRL_FULL_RUN" in os.environ
 environment_configs = {
     "SAC": {
         "Pendulum-v1": {
-            "n_seeds": 10 if full_run else 10,
+            "n_seeds": 100 if full_run else 10,
             "n_steps": 20000,
             "evaluation_interval": 1000,
             "hidden_dim": 64,
