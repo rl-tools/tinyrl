@@ -11,6 +11,8 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     verbose=False,
     force_recompile=False,
     enable_evaluation=True,
+    evaluation_interval=1000,
+    num_evaluation_episodes=10,
     interface_name="default", # this is the namespace used for the compilation of the TinyRL interface (in a temporary directory) and should be unique if run in parallel. We don't choose a random uuid because it would invalidate the cache and require a re-compilation every time
     # Compile-time parameters:
     # Same set of parameters as: rl::algorithms::td3::DefaultParameters
@@ -82,4 +84,4 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     loop_core_config_search_path_flag = f'-I{render_output_directory}'
     loop_core_config_flag = "-DTINYRL_USE_LOOP_CORE_CONFIG"
     flags = [loop_core_config_search_path_flag, loop_core_config_flag]
-    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation, **kwargs)
+    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation, evaluation_interval=evaluation_interval, num_evaluation_episodes=num_evaluation_episodes, **kwargs)
