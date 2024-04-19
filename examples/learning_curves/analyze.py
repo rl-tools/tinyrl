@@ -40,22 +40,26 @@ if __name__ == "__main__":
     
     
     plt.figure()
-    for library, returns in sorted(data.items(), key=lambda x: list(library_lookup.keys()).index(x[0])):
+    for library, returns in sorted(filter(lambda x: x[0] in library_lookup, data.items()), key=lambda x: list(library_lookup.keys()).index(x[0])):
         print(f"Library: {library}, Runs: {len(returns)}")
         print(f"Config: {configs[library]}")
         returns = np.array(data[library])
 
         returns_aggregate = returns.mean(axis=-1)
 
+        returns_min = returns_aggregate.min(axis=0)
         returns_mean = returns_aggregate.mean(axis=0)
         returns_median = np.median(returns_aggregate, axis=0)
         returns_std = returns_aggregate.std(axis=0)
 
         horizontal = range(0, config["n_steps"], config["evaluation_interval"])
         plt.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
-        # plt.plot(horizontal, returns_mean, label=library_lookup[library])
-        label = f"{library_lookup[library]} (final mean: {returns_mean[-1]:.2f})"
-        plt.plot(horizontal, returns_median, label=label)
+        # plt.plot(horizontal, returns_min, label=f"{library_lookup[library]} (min)")
+        plt.plot(horizontal, returns_median, label=f"{library_lookup[library]} (median)")
+        # label = f"{library_lookup[library]} (mean: {returns_mean[-1]:.2f})"
+        # plt.plot(horizontal, returns_mean, label=label)
+        # for run in returns_aggregate:
+        #     plt.plot(horizontal, run, alpha=0.1, color="gray")
         plt.xlabel("Steps")
         plt.ylabel("Returns")
         plt.legend()

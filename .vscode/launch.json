@@ -319,6 +319,18 @@
             ]
         },
         {
+            "name": "Learning Curves Analyze Remote Particular",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/analyze.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--input-dir", "~/hpc_mount/tinyrl/results/2024-04-17_19-18-11",
+                "--output-dir", "figures",
+            ]
+        },
+        {
             "name": "Test: PyTorch Import",
             "type": "python",
             "request": "launch",
