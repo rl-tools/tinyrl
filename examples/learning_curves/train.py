@@ -2,13 +2,7 @@ import gymnasium as gym
 import numpy as np
 import os
 import sac
-
-default_config_by_library = {
-    "tinyrl": sac.default_config_tinyrl,
-    "sb3": sac.default_config_sb3,
-    "cleanrl": sac.default_config_cleanrl,
-    "sbx": sac.default_config_sbx
-}
+import ppo
 
 full_run = "TINYRL_FULL_RUN" in os.environ
 
@@ -42,29 +36,49 @@ environment_configs = {
             "learning_starts": 10000,
             "batch_size": 256,
         }
+    },
+    "PPO": {
+        "Pendulum-v1": {
+            "n_seeds": 100 if full_run else 10,
+            "n_steps": 4,
+            "evaluation_interval": 1,
+            "learning_rate": 1e-3,
+            "entropy_coefficient": 0.0,
+            "n_epochs": 2,
+            "gamma": 0.99,
+            "batch_size": 256,
+            "hidden_dim": 64,
+            "on_policy_runner_steps_per_env": 1024,
+            "n_environments": 4
+        },
     }
 }
 
 library_configs = {
-    "SAC":{
+    # "SAC":{
+    #     "Pendulum-v1": {
+    #         "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Pendulum-v1"]},
+    #         "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Pendulum-v1"]},
+    #         "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
+    #         "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
+    #     },
+    #     "Hopper-v4": {
+    #         "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
+    #         "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
+    #         "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
+    #         "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
+    #     },
+    #     "Ant-v4": {
+    #         "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Ant-v4"]},
+    #         "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Ant-v4"]},
+    #         "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Ant-v4"]},
+    #         "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Ant-v4"]}
+    #     }
+    # },
+    "PPO":{
         "Pendulum-v1": {
-            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Pendulum-v1"]},
-            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Pendulum-v1"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
-            "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
+            "sb3": {**ppo.default_config_ppo, **environment_configs["PPO"]["Pendulum-v1"]},
         },
-        "Hopper-v4": {
-            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
-            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
-            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
-        },
-        "Ant-v4": {
-            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Ant-v4"]},
-            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Ant-v4"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Ant-v4"]},
-            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Ant-v4"]}
-        }
     }
 }
 
@@ -107,20 +121,29 @@ if __name__ == "__main__":
     config = flat_configs[args.config]
     print(f"Using config {args.config}: {config}")
     run_name = f"{config['algorithm']}_{config['environment_name']}_{config['library']}_{config['seed']:03d}"
-    if config["library"] == "tinyrl":
-        print("Using TinyRL", flush=True)
-        returns = sac.train_tinyrl(config)
-    elif config["library"] == "sb3":
-        print("Using Stable-Baselines3")
-        returns = sac.train_sb3(config)
-    elif config["library"] == "cleanrl":
-        print("Using CleanRL")
-        returns = sac.train_cleanrl(config)
-    elif config["library"] == "sbx":
-        print("Using SBX")
-        returns = sac.train_sbx(config)
+    if config["algorithm"] == "SAC":
+        print("Using SAC", flush=True)
+        if config["library"] == "tinyrl":
+            print("Using TinyRL", flush=True)
+            returns = sac.train_tinyrl(config)
+        elif config["library"] == "sb3":
+            print("Using Stable-Baselines3")
+            returns = sac.train_sb3(config)
+        elif config["library"] == "cleanrl":
+            print("Using CleanRL")
+            returns = sac.train_cleanrl(config)
+        elif config["library"] == "sbx":
+            print("Using SBX")
+            returns = sac.train_sbx(config)
+        else:
+            raise ValueError(f"Unknown library: {config['library']}")
     else:
-        raise ValueError(f"Unknown library: {config['library']}")
+        print("Using PPO", flush=True)
+        if config["library"] == "sb3":
+            print("Using Stable-Baselines3")
+            returns = ppo.train_sb3(config)
+        else:
+            raise ValueError(f"Unknown library: {config['library']}")
     returns = np.array(returns)
     os.makedirs(args.output_dir, exist_ok=True)
     with open(os.path.join(args.output_dir, f"{run_name}.pickle"), 'wb') as f:
