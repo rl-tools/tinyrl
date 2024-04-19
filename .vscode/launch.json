@@ -108,6 +108,54 @@
             }
         },
         {
+            "name": "Pendulum PPO",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/ppo/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                // "TINYRL_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "Pendulum PPO (recompile, verbose)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/ppo/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": ""
+            }
+        },
+        {
+            "name": "Pendulum PPO (recompile, verbose, force mkl)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/ppo/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": "",
+                "TINYRL_FORCE_MKL": ""
+            }
+        },
+        {
+            "name": "Pendulum PPO (inference)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/ppo/inference.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+            }
+        },
+        {
             "name": "Custom Environment Training (recompile, verbose)",
             "type": "python",
             "request": "launch",

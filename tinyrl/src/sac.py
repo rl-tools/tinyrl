@@ -47,8 +47,9 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     OPTIMIZER_BETA_1=0.9,
     OPTIMIZER_BETA_2=0.999,
     OPTIMIZER_EPSILON=1e-7,
+    **kwargs
     ):
-    assert(interface_name )
+    verbose = verbose or "TINYRL_VERBOSE" in os.environ
 
 
     # The action dim is needed to set the default target entropy
@@ -81,4 +82,4 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     loop_core_config_search_path_flag = f'-I{render_output_directory}'
     loop_core_config_flag = "-DTINYRL_USE_LOOP_CORE_CONFIG"
     flags = [loop_core_config_search_path_flag, loop_core_config_flag]
-    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation)
+    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation, **kwargs)

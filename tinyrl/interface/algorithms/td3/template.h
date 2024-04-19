@@ -32,7 +32,7 @@ namespace TINYRL_MODULE_NAME{
         static constexpr int N_WARMUP_STEPS = $N_WARMUP_STEPS;
         static constexpr TI STEP_LIMIT = $STEP_LIMIT;
         static constexpr TI REPLAY_BUFFER_CAP = $REPLAY_BUFFER_CAP;
-        static constexpr TI EPISODE_STEP_LIMIT = $EPISODE_STEP_LIMIT;
+        static constexpr TI EPISODE_STEP_LIMIT = T_EPISODE_STEP_LIMIT;
 
         static constexpr TI ACTOR_HIDDEN_DIM = $ACTOR_HIDDEN_DIM;
         static constexpr TI ACTOR_NUM_LAYERS = $ACTOR_NUM_LAYERS;

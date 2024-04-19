@@ -13,9 +13,15 @@ def get_time_limit(env):
     return max_episode_steps
 
 
+import re
 
+def is_valid_identifier(s):
+    pattern = r'^[_a-zA-Z][_a-zA-Z0-9]*$'
+    return bool(re.match(pattern, s))
 
-def compile_training(module_name, env_factory, flags, EPISODE_STEP_LIMIT=None, verbose=False, force_recompile=False, enable_evaluation=True): #either gym env or custom env spec
+def compile_training(module_name, env_factory, flags, EPISODE_STEP_LIMIT=None, verbose=False, force_blas=False, enable_blas=True, force_recompile=False, enable_evaluation=False, evaluation_interval=None, num_evaluation_episodes=10, disable_tensorboard=True): #either gym env or custom env spec
+    assert is_valid_identifier(module_name), "Module name is not a valid C identifier"
+    assert enable_blas or not force_blas, "Cannot force BLAS acceleration without enabling BLAS"
     use_python_environment = type(env_factory) != dict
     if use_python_environment:
         example_env = env_factory()
@@ -29,10 +35,16 @@ def compile_training(module_name, env_factory, flags, EPISODE_STEP_LIMIT=None, v
     use_python_environment_flag = '-DTINYRL_USE_PYTHON_ENVIRONMENT' if use_python_environment else ''
     observation_dim_flag = f'-DTINYRL_OBSERVATION_DIM={example_env.observation_space.shape[0]}' if use_python_environment else ''
     action_dim_flag = f'-DTINYRL_ACTION_DIM={example_env.action_space.shape[0]}' if use_python_environment else ''
-    enable_evaluation_flag = '-DTINYRL_ENABLE_EVALUATION' if enable_evaluation else ''
+    evaluation_flags = ['-DTINYRL_ENABLE_EVALUATION' if enable_evaluation else '']
+    evaluation_flags += [f'-DTINYRL_EVALUATION_INTERVAL={evaluation_interval}' if evaluation_interval else '']
+    evaluation_flags += [f'-DTINYRL_NUM_EVALUATION_EPISODES={num_evaluation_episodes}' if num_evaluation_episodes else '']
+    disable_tensorboard = '-RLTOOLS_DISABLE_TENSORBOARD' if disable_tensorboard else ''
     module_flag = f'-DTINYRL_MODULE_NAME={module_name}'
-    flags += [use_python_environment_flag, custom_environment_flag, observation_dim_flag, action_dim_flag, enable_evaluation_flag, module_flag]
-    flags += acceleration_flags()
+    flags += [use_python_environment_flag, custom_environment_flag, observation_dim_flag, action_dim_flag, *evaluation_flags, module_flag]
+    if enable_blas:
+        flags += acceleration_flags()
+        flags += [f'-DTINYRL_FORCE_BLAS={"true" if force_blas else "false"}' if force_blas else '']
+
     source = os.path.join(absolute_path, '../interface/training/training.cpp')
     output_path = compile(source, module_name, flags, verbose=verbose, force_recompile=force_recompile) #, **compile_time_parameters)
 

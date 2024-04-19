@@ -8,12 +8,11 @@ def link_mkl():
         try:
             mkl_version = version("mkl")
             mkl_include_version = version("mkl-include")
-            print(f"MKL is installed. Version: {mkl_version} (include: {mkl_include_version})")
             mkl_include_files = files("mkl-include")
             mkl_main_header_index = [os.path.basename(str(f)) == "mkl.h" for f in mkl_include_files].index(True)
             mkl_main_header_path = mkl_include_files[mkl_main_header_index]
             mkl_include_path = os.path.dirname(mkl_main_header_path.locate())
-            print(f"MKL include path: {mkl_include_path}")
+            print(f"MKL found. Version: {mkl_version} (include: {mkl_include_version}, path {mkl_include_path})")
 
             mkl_files = files("mkl")
             # create version symlinks for the MKL libraries (as they are not included in the pypi mkl package)

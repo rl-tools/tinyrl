@@ -28,7 +28,7 @@ def TD3(env_factory, # can be either a lambda that creates a new Gym-like enviro
     TARGET_NEXT_ACTION_NOISE_STD = 0.2,
     TARGET_NEXT_ACTION_NOISE_CLIP = 0.5,
     IGNORE_TERMINATION = False,
-    # Same set of parameters as rl::algorithms::sac::loop::core::DefaultParameters
+    # Same set of parameters as rl::algorithms::td3::loop::core::DefaultParameters
     N_ENVIRONMENTS = 1,
     N_WARMUP_STEPS = None,
     STEP_LIMIT = 10000,
@@ -47,8 +47,9 @@ def TD3(env_factory, # can be either a lambda that creates a new Gym-like enviro
     OPTIMIZER_BETA_1=0.9,
     OPTIMIZER_BETA_2=0.999,
     OPTIMIZER_EPSILON=1e-7,
+    **kwargs
     ):
-    assert(interface_name )
+    verbose = verbose or "TINYRL_VERBOSE" in os.environ
 
     REPLAY_BUFFER_CAP = REPLAY_BUFFER_CAP if REPLAY_BUFFER_CAP is not None else STEP_LIMIT
     N_WARMUP_STEPS = N_WARMUP_STEPS if N_WARMUP_STEPS is not None else max(ACTOR_BATCH_SIZE, CRITIC_BATCH_SIZE)
@@ -71,4 +72,4 @@ def TD3(env_factory, # can be either a lambda that creates a new Gym-like enviro
     loop_core_config_search_path_flag = f'-I{render_output_directory}'
     loop_core_config_flag = "-DTINYRL_USE_LOOP_CORE_CONFIG"
     flags = [loop_core_config_search_path_flag, loop_core_config_flag]
-    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation)
+    return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation, **kwargs)

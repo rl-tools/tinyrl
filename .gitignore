@@ -3,6 +3,8 @@
 /**/__pycache__
 /dist
 /pendulum_sac_checkpoint.h
+/pendulum_td3_checkpoint.h
+/pendulum_ppo_checkpoint.h
 a.out
 /results
 /figures

@@ -55,9 +55,9 @@ if __name__ == "__main__":
         horizontal = range(0, config["n_steps"], config["evaluation_interval"])
         plt.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
         # plt.plot(horizontal, returns_min, label=f"{library_lookup[library]} (min)")
-        plt.plot(horizontal, returns_median, label=f"{library_lookup[library]} (median)")
-        # label = f"{library_lookup[library]} (mean: {returns_mean[-1]:.2f})"
-        # plt.plot(horizontal, returns_mean, label=label)
+        # plt.plot(horizontal, returns_median, label=f"{library_lookup[library]} (median)")
+        label = f"{library_lookup[library]} (mean: {returns_mean[-1]:.2f})"
+        plt.plot(horizontal, returns_mean, label=label)
         # for run in returns_aggregate:
         #     plt.plot(horizontal, run, alpha=0.1, color="gray")
         plt.xlabel("Steps")

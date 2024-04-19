@@ -21,6 +21,8 @@
 #include <rl_tools/nn/parameters/persist_code.h>
 #include <rl_tools/nn_models/sequential/persist_code.h>
 #include <rl_tools/nn_models/mlp_unconditional_stddev/operations_generic.h>
+#include <rl_tools/nn_models/mlp/persist_code.h>
+// #include <rl_tools/nn_models/mlp/persist_code.h>
 
 #include "loop_core_config.h"
 
@@ -34,6 +36,9 @@ namespace rlt = rl_tools;
 
 namespace TINYRL_MODULE_NAME{
     using DEVICE = rlt::devices::DEVICE_FACTORY<>;
+#ifdef TINYRL_FORCE_BLAS
+    static_assert(DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_MKL || DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_ACCELERATE);
+#endif
     using RNG = decltype(rlt::random::default_engine(typename DEVICE::SPEC::RANDOM{}));
     using TI = typename DEVICE::index_t;
 
@@ -49,11 +54,6 @@ namespace TINYRL_MODULE_NAME{
     using ENVIRONMENT = ENVIRONMENT_FACTORY<T, TI>;
     #endif
 
-    #ifdef TINYRL_ENABLE_EVALUATION
-    constexpr bool ENABLE_EVALUATION = true;
-    #else
-    constexpr bool ENABLE_EVALUATION = false;
-    #endif
     #ifdef TINYRL_EPISODE_STEP_LIMIT
     constexpr TI EPISODE_STEP_LIMIT = TINYRL_EPISODE_STEP_LIMIT;
     #else
@@ -69,16 +69,29 @@ namespace TINYRL_MODULE_NAME{
     // #endif
 
 
-    template <typename NEXT>
-    struct LOOP_EVAL_PARAMETERS: rlt::rl::loop::steps::evaluation::Parameters<T, TI, NEXT>{
-        static constexpr TI EVALUATION_INTERVAL = 1000;
-        static constexpr TI NUM_EVALUATION_EPISODES = 10;
-        static constexpr TI N_EVALUATIONS = NEXT::CORE_PARAMETERS::STEP_LIMIT / EVALUATION_INTERVAL;
-    };
 
     DEVICE device;
 
-    using LOOP_EVAL_CONFIG = rlt::utils::typing::conditional_t<ENABLE_EVALUATION, rlt::rl::loop::steps::evaluation::Config<LOOP_CORE_CONFIG, LOOP_EVAL_PARAMETERS<LOOP_CORE_CONFIG>>, LOOP_CORE_CONFIG>;
+    #ifdef TINYRL_ENABLE_EVALUATION
+    constexpr bool ENABLE_EVALUATION = true;
+    #ifndef TINYRL_EVALUATION_INTERVAL
+    #error "TINYRL_EVALUATION_INTERVAL not defined"
+    #else
+    constexpr TI PARAMETER_EVALUATION_INTERVAL = TINYRL_EVALUATION_INTERVAL;
+    constexpr TI PARAMETER_NUM_EVALUATION_EPISODES = TINYRL_NUM_EVALUATION_EPISODES;
+
+    template <typename NEXT>
+    struct LOOP_EVAL_PARAMETERS: rlt::rl::loop::steps::evaluation::Parameters<T, TI, NEXT>{
+        static constexpr TI EVALUATION_INTERVAL = PARAMETER_EVALUATION_INTERVAL;
+        static constexpr TI NUM_EVALUATION_EPISODES = PARAMETER_NUM_EVALUATION_EPISODES;
+        static constexpr TI N_EVALUATIONS = NEXT::CORE_PARAMETERS::STEP_LIMIT / EVALUATION_INTERVAL;
+    };
+    using LOOP_EVAL_CONFIG = rlt::rl::loop::steps::evaluation::Config<LOOP_CORE_CONFIG, LOOP_EVAL_PARAMETERS<LOOP_CORE_CONFIG>>;
+    #endif
+    #else
+    constexpr bool ENABLE_EVALUATION = false;
+    using LOOP_EVAL_CONFIG = LOOP_CORE_CONFIG;
+    #endif
     using LOOP_TIMING_CONFIG = rlt::rl::loop::steps::timing::Config<LOOP_EVAL_CONFIG>;
     using LOOP_CONFIG = LOOP_TIMING_CONFIG;
     using LOOP_STATE = typename LOOP_CONFIG::template State<LOOP_CONFIG>;
@@ -96,10 +109,6 @@ namespace TINYRL_MODULE_NAME{
         State(TI seed){
             rlt::malloc(device, static_cast<LOOP_STATE&>(*this));
             rlt::init(device, static_cast<LOOP_STATE&>(*this), seed);
-    // #ifdef TINYRL_USE_PPO
-    //         state.actor_optimizer.parameters.alpha = 1e-3;
-    //         state.critic_optimizer.parameters.alpha = 1e-3;
-    // #endif
         }
         bool step(){
             return rlt::step(device, static_cast<LOOP_STATE&>(*this));
