@@ -45,7 +45,7 @@ environment_configs = {
             "learning_rate": 1e-3,
             "entropy_coefficient": 0.0,
             "n_epochs": 2,
-            "gamma": 0.99,
+            "gamma": 0.9,
             "batch_size": 256,
             "hidden_dim": 64,
             "on_policy_runner_steps_per_env": 1024,
