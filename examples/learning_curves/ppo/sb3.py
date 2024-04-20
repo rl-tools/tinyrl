@@ -28,6 +28,9 @@ def train_sb3(config):
         gamma=config["gamma"],
         batch_size=config["batch_size"],
         n_steps=config["on_policy_runner_steps_per_env"],
+        gae_lambda=config["gae_lambda"],
+        clip_range=config["clip_coef"],
+        normalize_advantage=config["norm_advantage"],
     )
     returns = []
     for evaluation_step_i in range(config["n_steps"] // config["evaluation_interval"]):
