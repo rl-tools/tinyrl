@@ -3,16 +3,14 @@
 import os
 import random
 import time
-from dataclasses import dataclass
 
 import gymnasium as gym
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import tyro
 from torch.distributions.normal import Normal
-from torch.utils.tensorboard import SummaryWriter
+from evaluate_policy import evaluate_policy
 
 def make_env(env_id):
     def thunk():
@@ -108,12 +106,22 @@ def train_cleanrl(config):
     next_obs = torch.Tensor(next_obs).to(device)
     next_done = torch.zeros(config["n_environments"]).to(device)
 
+    evaluation_returns = []
+
     for iteration in range(1, config["n_steps"] + 1):
         # Annealing the rate if instructed to do so.
         if config["anneal_lr"]:
             frac = 1.0 - (iteration - 1.0) / config["n_steps"]
             lrnow = frac * config["learning_rate"]
             optimizer.param_groups[0]["lr"] = lrnow
+
+        if iteration % config["evaluation_interval"] == 0:
+            def policy(observation):
+                return agent.actor_mean(torch.Tensor(observation).to(device).unsqueeze(0))[0].detach().cpu().numpy()
+            current_returns = evaluate_policy(policy, config)
+            print(f"Step: {iteration}, Returns: {np.array(current_returns).mean()}", flush=True)
+            evaluation_returns.append(current_returns)
+
 
         for step in range(0, config["on_policy_runner_steps_per_env"]):
             global_step += config["n_environments"]
@@ -217,3 +225,4 @@ def train_cleanrl(config):
 
         # TRY NOT TO MODIFY: record rewards for plotting purposes
     envs.close()
+    return evaluation_returns

@@ -80,7 +80,8 @@ library_configs = {
     # },
     "PPO":{
         "Pendulum-v1": {
-            "sb3": {**ppo.default_config_ppo, **environment_configs["PPO"]["Pendulum-v1"]},
+            "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
+            "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
         },
     }
 }
@@ -145,6 +146,9 @@ if __name__ == "__main__":
         if config["library"] == "sb3":
             print("Using Stable-Baselines3")
             returns = ppo.train_sb3(config)
+        elif config["library"] == "cleanrl":
+            print("Using CleanRL")
+            returns = ppo.train_cleanrl(config)
         else:
             raise ValueError(f"Unknown library: {config['library']}")
     returns = np.array(returns)
