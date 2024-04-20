@@ -67,6 +67,8 @@ class Actor(nn.Module):
         if self.config["spinning_up_log_std"]:
             log_std = torch.tanh(log_std)
             log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)  # From SpinUp / Denis Yarats
+        else:
+            logs_std = to.clip(log_std, LOG_STD_MIN, LOG_STD_MAX)
 
         return mean, log_std
 
