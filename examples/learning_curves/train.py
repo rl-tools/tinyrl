@@ -46,10 +46,13 @@ environment_configs = {
             "entropy_coefficient": 0.0,
             "n_epochs": 2,
             "gamma": 0.9,
+            "gae_lambda": 0.95,
             "batch_size": 256,
             "hidden_dim": 64,
             "on_policy_runner_steps_per_env": 1024,
-            "n_environments": 4
+            "n_environments": 4,
+            "clip_coef": 0.2,
+            "norm_advantage": True,
         },
     }
 }
