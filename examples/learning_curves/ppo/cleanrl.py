@@ -37,16 +37,16 @@ class Agent(nn.Module):
         super().__init__()
         self.critic = nn.Sequential(
             layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), hidden_dim)),
-            nn.Tanh(),
+            nn.ReLU(),
             layer_init(nn.Linear(hidden_dim, hidden_dim)),
-            nn.Tanh(),
+            nn.ReLU(),
             layer_init(nn.Linear(hidden_dim, 1), std=1.0),
         )
         self.actor_mean = nn.Sequential(
             layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), hidden_dim)),
-            nn.Tanh(),
+            nn.ReLU(),
             layer_init(nn.Linear(hidden_dim, hidden_dim)),
-            nn.Tanh(),
+            nn.ReLU(),
             layer_init(nn.Linear(hidden_dim, np.prod(envs.single_action_space.shape)), std=0.01),
         )
         self.actor_logstd = nn.Parameter(torch.zeros(1, np.prod(envs.single_action_space.shape)))

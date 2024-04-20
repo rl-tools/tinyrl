@@ -41,7 +41,8 @@ environment_configs = {
         "Pendulum-v1": {
             "n_seeds": 100 if full_run else 10,
             "n_steps": 73, # ~ 300k steps
-            "evaluation_interval": 1,
+            "evaluation_interval": 10,
+            # "num_evaluation_episodes": 10,
             "learning_rate": 1e-3,
             "entropy_coefficient": 0.0,
             "n_epochs": 2,
@@ -80,6 +81,7 @@ library_configs = {
     # },
     "PPO":{
         "Pendulum-v1": {
+            "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Pendulum-v1"]},
             "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
             "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
         },
@@ -143,7 +145,10 @@ if __name__ == "__main__":
             raise ValueError(f"Unknown library: {config['library']}")
     else:
         print("Using PPO", flush=True)
-        if config["library"] == "sb3":
+        if config["library"] == "tinyrl":
+            print("Using PPO")
+            returns = ppo.train_tinyrl(config)
+        elif config["library"] == "sb3":
             print("Using Stable-Baselines3")
             returns = ppo.train_sb3(config)
         elif config["library"] == "cleanrl":
@@ -155,4 +160,6 @@ if __name__ == "__main__":
     os.makedirs(args.output_dir, exist_ok=True)
     with open(os.path.join(args.output_dir, f"{run_name}.pickle"), 'wb') as f:
         pickle.dump({'returns': returns, 'config': config}, f)
+
+    
     

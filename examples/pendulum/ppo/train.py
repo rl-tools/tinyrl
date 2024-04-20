@@ -36,7 +36,7 @@ for env_name, selected_env in [("Gymnasium", env_factory), ("RLtools", custom_en
         CRITIC_HIDDEN_DIM = 64,
         ON_POLICY_RUNNER_STEPS_PER_ENV = 1024,
         N_ENVIRONMENTS = 4,
-        TOTAL_STEP_LIMIT = 1024 * 4 * 74,
+        STEP_LIMIT = 74, # 1024 * 4 * 74 ~ 300k steps
     )
     state = ppo.State(seed)
 

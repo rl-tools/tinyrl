@@ -37,6 +37,7 @@ def PPO(env_factory, # can be either a lambda that creates a new Gym-like enviro
     N_EPOCHS = 10,
     IGNORE_TERMINATION = False, # ignoring the termination flag is useful for training on environments with negative rewards, where the agent would try to terminate the episode as soon as possible otherwise
     # Same set of parameters as rl::algorithms::ppo::loop::core::DefaultParameters
+    STEP_LIMIT = None,
     TOTAL_STEP_LIMIT = 100000, # This is environment step limit => translated into the closets ppo step limit (smaller or equal in total environment steps)
     ACTOR_HIDDEN_DIM = 64,
     ACTOR_NUM_LAYERS = 3,
@@ -55,11 +56,13 @@ def PPO(env_factory, # can be either a lambda that creates a new Gym-like enviro
     OPTIMIZER_EPSILON=1e-7,
     **kwargs
     ):
+    assert STEP_LIMIT is not None or TOTAL_STEP_LIMIT is not None, "Either STEP_LIMIT or TOTAL_STEP_LIMIT must be set"
     evaluation_interval = evaluation_interval if evaluation_interval is not None else 10
     verbose = verbose or "TINYRL_VERBOSE" in os.environ
-    STEP_LIMIT = math.floor(TOTAL_STEP_LIMIT/(ON_POLICY_RUNNER_STEPS_PER_ENV * N_ENVIRONMENTS))
+    if STEP_LIMIT is None:
+        STEP_LIMIT = math.floor(TOTAL_STEP_LIMIT/(ON_POLICY_RUNNER_STEPS_PER_ENV * N_ENVIRONMENTS))
 
-    compile_time_parameters = sanitize_values({k:v for k, v in locals().items() if k in [*inspect.signature(PPO).parameters.keys(), "STEP_LIMIT"]})
+    compile_time_parameters = sanitize_values({k:v for k, v in locals().items() if k in inspect.signature(PPO).parameters.keys()})
 
     module_name = f'tinyrl_ppo_{interface_name}'
 
