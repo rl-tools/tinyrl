@@ -7,11 +7,6 @@ from dataclasses import dataclass
 
 import gymnasium as gym
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from stable_baselines3.common.buffers import ReplayBuffer
 
 from evaluate_policy import evaluate_policy
 
@@ -23,68 +18,6 @@ def make_env(env_id, seed):
     return thunk
 
 # ALGO LOGIC: initialize agent here:
-class SoftQNetwork(nn.Module):
-    def __init__(self, env, hidden_dim):
-        super().__init__()
-        self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod() + np.prod(env.single_action_space.shape), hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, hidden_dim)
-        self.fc3 = nn.Linear(hidden_dim, 1)
-
-    def forward(self, x, a):
-        x = torch.cat([x, a], 1)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
-
-LOG_STD_MAX = 2
-LOG_STD_MIN = -5
-
-
-class Actor(nn.Module):
-    def __init__(self, env, config):
-        self.config = config
-        hidden_dim = config["hidden_dim"]
-        super().__init__()
-        self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod(), hidden_dim)
-        self.fc2 = nn.Linear(hidden_dim, hidden_dim)
-        self.fc_mean = nn.Linear(hidden_dim, np.prod(env.single_action_space.shape))
-        self.fc_logstd = nn.Linear(hidden_dim, np.prod(env.single_action_space.shape))
-        # action rescaling
-        self.register_buffer(
-            "action_scale", torch.tensor((env.action_space.high - env.action_space.low) / 2.0, dtype=torch.float32)
-        )
-        self.register_buffer(
-            "action_bias", torch.tensor((env.action_space.high + env.action_space.low) / 2.0, dtype=torch.float32)
-        )
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        mean = self.fc_mean(x)
-        log_std = self.fc_logstd(x)
-        if self.config["spinning_up_log_std"]:
-            log_std = torch.tanh(log_std)
-            log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)  # From SpinUp / Denis Yarats
-        else:
-            logs_std = to.clip(log_std, LOG_STD_MIN, LOG_STD_MAX)
-
-        return mean, log_std
-
-    def get_action(self, x):
-        mean, log_std = self(x)
-        std = log_std.exp()
-        normal = torch.distributions.Normal(mean, std)
-        x_t = normal.rsample()  # for reparameterization trick (mean + std * N(0,1))
-        y_t = torch.tanh(x_t)
-        action = y_t * self.action_scale + self.action_bias
-        log_prob = normal.log_prob(x_t)
-        # Enforcing Action Bound
-        log_prob -= torch.log(self.action_scale * (1 - y_t.pow(2)) + 1e-6)
-        log_prob = log_prob.sum(1, keepdim=True)
-        mean = torch.tanh(mean) * self.action_scale + self.action_bias
-        return action, log_prob, mean
 
 default_config = {
     # "learning_starts": 100,
@@ -102,6 +35,73 @@ default_config = {
 }
 
 def train_cleanrl(config):
+    import torch
+    import torch.nn as nn
+    import torch.nn.functional as F
+    import torch.optim as optim
+    from stable_baselines3.common.buffers import ReplayBuffer
+    class SoftQNetwork(nn.Module):
+        def __init__(self, env, hidden_dim):
+            super().__init__()
+            self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod() + np.prod(env.single_action_space.shape), hidden_dim)
+            self.fc2 = nn.Linear(hidden_dim, hidden_dim)
+            self.fc3 = nn.Linear(hidden_dim, 1)
+
+        def forward(self, x, a):
+            x = torch.cat([x, a], 1)
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            x = self.fc3(x)
+            return x
+
+
+    LOG_STD_MAX = 2
+    LOG_STD_MIN = -5
+
+
+    class Actor(nn.Module):
+        def __init__(self, env, config):
+            self.config = config
+            hidden_dim = config["hidden_dim"]
+            super().__init__()
+            self.fc1 = nn.Linear(np.array(env.single_observation_space.shape).prod(), hidden_dim)
+            self.fc2 = nn.Linear(hidden_dim, hidden_dim)
+            self.fc_mean = nn.Linear(hidden_dim, np.prod(env.single_action_space.shape))
+            self.fc_logstd = nn.Linear(hidden_dim, np.prod(env.single_action_space.shape))
+            # action rescaling
+            self.register_buffer(
+                "action_scale", torch.tensor((env.action_space.high - env.action_space.low) / 2.0, dtype=torch.float32)
+            )
+            self.register_buffer(
+                "action_bias", torch.tensor((env.action_space.high + env.action_space.low) / 2.0, dtype=torch.float32)
+            )
+
+        def forward(self, x):
+            x = F.relu(self.fc1(x))
+            x = F.relu(self.fc2(x))
+            mean = self.fc_mean(x)
+            log_std = self.fc_logstd(x)
+            if self.config["spinning_up_log_std"]:
+                log_std = torch.tanh(log_std)
+                log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)  # From SpinUp / Denis Yarats
+            else:
+                logs_std = to.clip(log_std, LOG_STD_MIN, LOG_STD_MAX)
+
+            return mean, log_std
+
+        def get_action(self, x):
+            mean, log_std = self(x)
+            std = log_std.exp()
+            normal = torch.distributions.Normal(mean, std)
+            x_t = normal.rsample()  # for reparameterization trick (mean + std * N(0,1))
+            y_t = torch.tanh(x_t)
+            action = y_t * self.action_scale + self.action_bias
+            log_prob = normal.log_prob(x_t)
+            # Enforcing Action Bound
+            log_prob -= torch.log(self.action_scale * (1 - y_t.pow(2)) + 1e-6)
+            log_prob = log_prob.sum(1, keepdim=True)
+            mean = torch.tanh(mean) * self.action_scale + self.action_bias
+            return action, log_prob, mean
     config["q_lr"] = config["learning_rate"]
     config["policy_lr"] = config["learning_rate"]
     import stable_baselines3 as sb3

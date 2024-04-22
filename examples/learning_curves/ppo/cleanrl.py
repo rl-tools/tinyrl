@@ -6,10 +6,6 @@ import time
 
 import gymnasium as gym
 import numpy as np
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.distributions.normal import Normal
 from evaluate_policy import evaluate_policy
 
 def make_env(env_id):
@@ -26,44 +22,6 @@ def make_env(env_id):
     return thunk
 
 
-def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
-    torch.nn.init.orthogonal_(layer.weight, std)
-    torch.nn.init.constant_(layer.bias, bias_const)
-    return layer
-
-
-class Agent(nn.Module):
-    def __init__(self, envs, hidden_dim):
-        super().__init__()
-        self.critic = nn.Sequential(
-            layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), hidden_dim)),
-            nn.ReLU(),
-            layer_init(nn.Linear(hidden_dim, hidden_dim)),
-            nn.ReLU(),
-            layer_init(nn.Linear(hidden_dim, 1), std=1.0),
-        )
-        self.actor_mean = nn.Sequential(
-            layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), hidden_dim)),
-            nn.ReLU(),
-            layer_init(nn.Linear(hidden_dim, hidden_dim)),
-            nn.ReLU(),
-            layer_init(nn.Linear(hidden_dim, np.prod(envs.single_action_space.shape)), std=0.01),
-        )
-        self.actor_logstd = nn.Parameter(torch.zeros(1, np.prod(envs.single_action_space.shape)))
-
-    def get_value(self, x):
-        return self.critic(x)
-
-    def get_action_and_value(self, x, action=None):
-        action_mean = self.actor_mean(x)
-        action_logstd = self.actor_logstd.expand_as(action_mean)
-        action_std = torch.exp(action_logstd)
-        probs = Normal(action_mean, action_std)
-        if action is None:
-            action = probs.sample()
-        return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
-
-
 default_config = {
     "anneal_lr": False,
     "clip_vloss": False,
@@ -71,6 +29,46 @@ default_config = {
 }
 
 def train_cleanrl(config):
+    import torch
+    import torch.nn as nn
+    import torch.optim as optim
+    from torch.distributions.normal import Normal
+    def layer_init(layer, std=np.sqrt(2), bias_const=0.0):
+        torch.nn.init.orthogonal_(layer.weight, std)
+        torch.nn.init.constant_(layer.bias, bias_const)
+        return layer
+
+
+    class Agent(nn.Module):
+        def __init__(self, envs, hidden_dim):
+            super().__init__()
+            self.critic = nn.Sequential(
+                layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), hidden_dim)),
+                nn.ReLU(),
+                layer_init(nn.Linear(hidden_dim, hidden_dim)),
+                nn.ReLU(),
+                layer_init(nn.Linear(hidden_dim, 1), std=1.0),
+            )
+            self.actor_mean = nn.Sequential(
+                layer_init(nn.Linear(np.array(envs.single_observation_space.shape).prod(), hidden_dim)),
+                nn.ReLU(),
+                layer_init(nn.Linear(hidden_dim, hidden_dim)),
+                nn.ReLU(),
+                layer_init(nn.Linear(hidden_dim, np.prod(envs.single_action_space.shape)), std=0.01),
+            )
+            self.actor_logstd = nn.Parameter(torch.zeros(1, np.prod(envs.single_action_space.shape)))
+
+        def get_value(self, x):
+            return self.critic(x)
+
+        def get_action_and_value(self, x, action=None):
+            action_mean = self.actor_mean(x)
+            action_logstd = self.actor_logstd.expand_as(action_mean)
+            action_std = torch.exp(action_logstd)
+            probs = Normal(action_mean, action_std)
+            if action is None:
+                action = probs.sample()
+            return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
     # args = tyro.cli(Args)
     batch_size = int(config["n_environments"] * config["on_policy_runner_steps_per_env"])
     minibatch_size = config["batch_size"]
@@ -115,7 +113,7 @@ def train_cleanrl(config):
             lrnow = frac * config["learning_rate"]
             optimizer.param_groups[0]["lr"] = lrnow
 
-        if iteration % config["evaluation_interval"] == 0:
+        if iteration % config["evaluation_interval"] == 1:
             def policy(observation):
                 return agent.actor_mean(torch.Tensor(observation).to(device).unsqueeze(0))[0].detach().cpu().numpy()
             current_returns = evaluate_policy(policy, config)

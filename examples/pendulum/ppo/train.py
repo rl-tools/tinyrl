@@ -2,6 +2,7 @@ import os
 from tinyrl import PPO, color
 import gymnasium as gym
 from gymnasium.experimental.wrappers import RescaleActionV0
+import torch
 
 env = gym.make("Pendulum-v1")
 seed = 0x1337
@@ -18,7 +19,7 @@ custom_environment = {
 }
 
 
-for env_name, selected_env in [("Gymnasium", env_factory), ("RLtools", custom_environment)]:
+for env_name, selected_env in [("Gymnasium", env_factory), ("RLtools", custom_environment)][1:]:
     print(f"Training using the {color(env_name, 'red')} environment")
     ppo = PPO(
         selected_env,
