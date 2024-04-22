@@ -146,6 +146,20 @@
             }
         },
         {
+            "name": "Pendulum PPO (recompile, verbose, disable mkl)",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/pendulum/ppo/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "TINYRL_FORCE_RECOMPILE": "",
+                "TINYRL_FORCE_COMPILE_VERBOSE": "",
+                "TINYRL_VERBOSE": "",
+                "TINYRL_DISABLE_MKL": ""
+            }
+        },
+        {
             "name": "Pendulum PPO (inference)",
             "type": "python",
             "request": "launch",
