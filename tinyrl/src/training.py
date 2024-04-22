@@ -42,7 +42,7 @@ def compile_training(module_name, env_factory, flags, EPISODE_STEP_LIMIT=None, v
     module_flag = f'-DTINYRL_MODULE_NAME={module_name}'
     flags += [use_python_environment_flag, custom_environment_flag, observation_dim_flag, action_dim_flag, *evaluation_flags, module_flag]
     if enable_blas:
-        flags += acceleration_flags()
+        flags += acceleration_flags(module_name)
         flags += [f'-DTINYRL_FORCE_BLAS={"true" if force_blas else "false"}' if force_blas else '']
 
     source = os.path.join(absolute_path, '../interface/training/training.cpp')

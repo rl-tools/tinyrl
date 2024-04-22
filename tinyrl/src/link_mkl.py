@@ -3,6 +3,7 @@ force_mkl = "TINYRL_FORCE_MKL" in os.environ
 
 def link_mkl():
     flags = []
+    mkl_found = False
     if sys.platform == "linux":
         from importlib.metadata import files, version, PackageNotFoundError
         try:
@@ -44,7 +45,9 @@ def link_mkl():
             ]
             flags += ["-I" + os.path.join(sys.prefix + "/include")]
             flags += ["-DRL_TOOLS_BACKEND_ENABLE_MKL"]
+            flags += ["-DRL_TOOLS_DISABLE_UNALIGNED_MEMORY_ALLOCATIONS"]
+            mkl_found = True
         except PackageNotFoundError:
             assert(not force_mkl)
             print("MKL is not installed. To use MKL please install `mkl` and `mkl-include`")
-    return flags
+    return mkl_found, flags

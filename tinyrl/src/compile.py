@@ -1,4 +1,4 @@
-import os, sys, sysconfig, shutil, subprocess, re, keyword
+import os, sys, sysconfig, shutil, subprocess, re, keyword, platform, warnings
 import pybind11
 from .. import CACHE_PATH
 
@@ -15,6 +15,15 @@ def find_compiler():
     windows_compilers = ["cl"]
     compilers = unix_compilers if (sys.platform in ["linux", "darwin"]) else windows_compilers
     compilers = [compiler for compiler in compilers if shutil.which(compiler) is not None]
+    raw_platform_compiler = platform.python_compiler().startswith("GCC")
+    platform_compiler = "g++" if raw_platform_compiler else None
+    if platform_compiler is None:
+        warnings.warn(f"The platform compiler {raw_platform_compiler} is not recognized.")
+    else:
+        if platform_compiler not in compilers:
+            warnings.warn(f"The platform compiler {platform_compiler} (used for compiling Python) is not found (found: {compilers}).")
+        else:
+            compilers = [platform_compiler]
     assert len(compilers) > 0, "No C++ compiler found. Please install clang, g++ or cl (MSVC)."
     return compilers
 

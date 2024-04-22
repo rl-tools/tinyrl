@@ -37,7 +37,7 @@ namespace rlt = rl_tools;
 namespace TINYRL_MODULE_NAME{
     using DEVICE = rlt::devices::DEVICE_FACTORY<>;
 #ifdef TINYRL_FORCE_BLAS
-    static_assert(DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_MKL || DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_ACCELERATE);
+    static_assert(DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_MKL || DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_ACCELERATE || DEVICE::DEVICE_ID == rlt::devices::DeviceId::CPU_OPENBLAS);
 #endif
     using RNG = decltype(rlt::random::default_engine(typename DEVICE::SPEC::RANDOM{}));
     using TI = typename DEVICE::index_t;

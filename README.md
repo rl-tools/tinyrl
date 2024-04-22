@@ -67,3 +67,6 @@ On macOS TinyRL automatically uses Accelerate. To use MKL on linux you can insta
 ```
 pip install tinyrl[mkl]
 ```
+
+
+Note that (silent) issues can arise when using MKL and importing `torch` in the same process. If for some reason you need to use TinyRL and `torch` in the same process you can fall back to using e.g. the default blas on your system (e.g. `OpenBLAS`). We found `OpenBLAS` to be up to 4x slower than Intel MKL, though.
