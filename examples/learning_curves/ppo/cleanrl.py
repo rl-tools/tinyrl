@@ -113,7 +113,7 @@ def train_cleanrl(config):
             lrnow = frac * config["learning_rate"]
             optimizer.param_groups[0]["lr"] = lrnow
 
-        if iteration % config["evaluation_interval"] == 1:
+        if (iteration % config["evaluation_interval"]) == 1 or (config["evaluation_interval"] == 1):
             def policy(observation):
                 return agent.actor_mean(torch.Tensor(observation).to(device).unsqueeze(0))[0].detach().cpu().numpy()
             current_returns = evaluate_policy(policy, config)
