@@ -38,7 +38,7 @@ environment_configs = {
     },
     "PPO": {
         "Pendulum-v1": {
-            "n_seeds": 100 if full_run else 10,
+            "n_seeds": 30 if full_run else 10,
             "n_steps": 73, # ~ 300k steps
             "evaluation_interval": 1,
             # "num_evaluation_episodes": 10,
