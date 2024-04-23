@@ -5,6 +5,7 @@ from evaluate_policy import evaluate_policy
 import numpy as np
 
 default_config = {
+    "INITIAL_ACTION_STD": 1.0
 }
 def env_factory_factory(config, **kwargs):
     def env_factory(**kwargs):
@@ -14,7 +15,7 @@ def env_factory_factory(config, **kwargs):
         return env
     return env_factory
 
-def train_tinyrl(config, use_python_environment=True):
+def train_tinyrl(config, use_python_environment=True, verbose=False):
     custom_environment = {
         "path": os.path.abspath("../custom_environment"),
         "action_dim": 1,
@@ -38,12 +39,13 @@ def train_tinyrl(config, use_python_environment=True):
         "NORMALIZE_ADVANTAGE": config["norm_advantage"],
         "STEP_LIMIT": config["n_steps"],
         "OPTIMIZER_EPSILON": 1e-8, # PyTorch default
+        **default_config
     }
     interface_name = str(config["seed"])
     if use_python_environment:
-        ppo = PPO(env_factory, enable_evaluation=True, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
+        ppo = PPO(env_factory, enable_evaluation=True, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, verbose=verbose, **kwargs)
     else:
-        ppo = PPO(custom_environment, enable_evaluation=False, interface_name=interface_name, **kwargs)
+        ppo = PPO(custom_environment, enable_evaluation=False, interface_name=interface_name, verbose=verbose, **kwargs)
     state = ppo.State(config["seed"])
     returns = []
     for step_i in range(config["n_steps"]):

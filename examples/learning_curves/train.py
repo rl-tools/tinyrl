@@ -38,7 +38,7 @@ environment_configs = {
     },
     "PPO": {
         "Pendulum-v1": {
-            "n_seeds": 30 if full_run else 10,
+            "n_seeds": 100 if full_run else 10,
             "n_steps": 73, # ~ 300k steps
             "evaluation_interval": 1,
             # "num_evaluation_episodes": 10,
@@ -114,6 +114,7 @@ if __name__ == "__main__":
     parser.add_argument("--algorithm", type=str, default=None)
     parser.add_argument("--environment", type=str, default=None)
     parser.add_argument("--library", type=str, default=None)
+    parser.add_argument("--verbose", action="store_true")
 
     args = parser.parse_args()
     flat_configs = flatten_configs(algorithm_filter=args.algorithm, environment_filter=args.environment, library_filter=args.library)
@@ -146,7 +147,7 @@ if __name__ == "__main__":
         print("Using PPO", flush=True)
         if config["library"] == "tinyrl":
             print("Using PPO")
-            returns = ppo.train_tinyrl(config)
+            returns = ppo.train_tinyrl(config, verbose=args.verbose)
         elif config["library"] == "sb3":
             print("Using Stable-Baselines3")
             returns = ppo.train_sb3(config)
