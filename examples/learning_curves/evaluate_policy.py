@@ -1,7 +1,7 @@
 import gymnasium as gym
 
-def evaluate_policy(policy, config, n_episodes=100, env_factory=None):
-    env_replay = gym.make(config["environment_name"]) if env_factory is None else env_factory()
+def evaluate_policy(policy, config, env_factory, n_episodes=100):
+    env_replay = env_factory()
     env_replay.reset(seed=config["seed"])
     returns = []
     for episode_i in range(n_episodes):

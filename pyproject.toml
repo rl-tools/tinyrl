@@ -34,9 +34,9 @@ tests = [
   "torch"
 ]
 learning-curves = [
-  "stable-baselines3",
-  "torch",
-  "gymnasium[mujoco]",
+  "stable-baselines3==2.3.0",
+  "torch==2.2.1",
+  "gymnasium[mujoco]==0.29.1",
 ]
 
 [tool.hatch.build]

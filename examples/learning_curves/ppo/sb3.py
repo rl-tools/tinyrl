@@ -56,8 +56,8 @@ def train_sb3(config):
             if self.evaluation_step_i % config["evaluation_interval"] == 0:
                 def policy(observation):
                     return model.predict(observation, deterministic=True)[0]
-                current_returns = evaluate_policy(policy, config)
-                print(f"Step {self.evaluation_step_i}: {np.mean(current_returns)}", flush=True)
+                current_returns = evaluate_policy(policy, config, env_factory)
+                # print(f"Step {self.evaluation_step_i}: {np.mean(current_returns)} log_std: {self.model.policy.log_std}", flush=True)
                 returns.append(current_returns)
             self.evaluation_step_i += 1
 

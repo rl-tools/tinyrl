@@ -122,7 +122,7 @@ def train_cleanrl(config):
         if (iteration % config["evaluation_interval"]) == 1 or (config["evaluation_interval"] == 1):
             def policy(observation):
                 return agent.actor_mean(torch.Tensor(observation).to(device).unsqueeze(0))[0].detach().cpu().numpy()
-            current_returns = evaluate_policy(policy, config)
+            current_returns = evaluate_policy(policy, config, make_env(config))
             print(f"Step: {iteration}, Returns: {np.array(current_returns).mean()}", flush=True)
             evaluation_returns.append(current_returns)
 
