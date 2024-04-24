@@ -60,7 +60,7 @@ def train_cleanrl(config):
                 nn.ReLU(),
                 layer_init(nn.Linear(hidden_dim, np.prod(envs.single_action_space.shape)), std=0.01),
             )
-            self.actor_logstd = nn.Parameter(torch.zeros(1, np.prod(envs.single_action_space.shape)))
+            self.actor_logstd = nn.Parameter(torch.ones(1, np.prod(envs.single_action_space.shape))*np.log(config["initial_action_std"]))
 
         def get_value(self, x):
             return self.critic(x)

@@ -54,6 +54,7 @@ environment_configs = {
             "n_environments": 4,
             "clip_coef": 0.2,
             "norm_advantage": True,
+            "initial_action_std": 2.0
         },
     }
 }
