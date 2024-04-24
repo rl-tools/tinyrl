@@ -3,13 +3,13 @@ import os
 import sac
 import ppo
 
-full_run = "TINYRL_FULL_RUN" in os.environ
+TINYRL_FULL_RUN = "TINYRL_FULL_RUN" in os.environ
 
 
 environment_configs = {
     "SAC": {
         "Pendulum-v1": {
-            "n_seeds": 100 if full_run else 10,
+            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
             "n_steps": 20000,
             "evaluation_interval": 100,
             "hidden_dim": 64,
@@ -18,8 +18,8 @@ environment_configs = {
             "batch_size": 100,
         },
         "Hopper-v4": {
-            "n_seeds": 30 if full_run else 10,
-            "n_steps": 1000000 if full_run else 100000,
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
+            "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 1000,
             "hidden_dim": 64,
             "learning_rate": 3e-4,
@@ -27,8 +27,8 @@ environment_configs = {
             "batch_size": 128,
         },
         "Ant-v4": {
-            "n_seeds": 30 if full_run else 10,
-            "n_steps": 1000000 if full_run else 100000,
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
+            "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 10000,
             "hidden_dim": 256,
             "learning_rate": 3e-4,
@@ -38,7 +38,7 @@ environment_configs = {
     },
     "PPO": {
         "Pendulum-v1": {
-            "n_seeds": 100 if full_run else 10,
+            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
             "n_steps": 73, # ~ 300k steps
             "evaluation_interval": 1,
             # "num_evaluation_episodes": 10,
