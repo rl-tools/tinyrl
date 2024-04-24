@@ -23,7 +23,7 @@ def load_checkpoint(checkpoint, interface_name="default", force_recompile=False,
 
     flags = [module_flag, header_search_path_flag]
 
-    flags += acceleration_flags()
+    flags += acceleration_flags(module_name)
 
     absolute_path = os.path.dirname(os.path.abspath(__file__))
     source = os.path.join(absolute_path, '../interface/inference/inference.cpp')
