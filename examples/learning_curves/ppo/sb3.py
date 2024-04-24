@@ -19,6 +19,8 @@ def train_sb3(config):
     torch.manual_seed(config["seed"])
     def env_factory(seed=0):
         env = gym.make(config["environment_name"])
+        env = RescaleActionV0(env, -1, 1)
+        env = gym.wrappers.ClipAction(env)
         env.reset(seed=seed)
         return env
     # envs = DummyVecEnv([lambda: env_factory(seed=(config["seed"]*config["n_environments"] + i)) for i in range(config["n_environments"])])

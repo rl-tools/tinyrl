@@ -8,16 +8,19 @@ import gymnasium as gym
 import numpy as np
 from evaluate_policy import evaluate_policy
 
-def make_env(env_id):
+def make_env(config):
     def thunk():
-        env = gym.make(env_id)
-        env = gym.wrappers.FlattenObservation(env)  # deal with dm_control's Dict observation space
+        env = gym.make(config["environment_name"])
+        # env = gym.wrappers.FlattenObservation(env)  # deal with dm_control's Dict observation space
         # env = gym.wrappers.RecordEpisodeStatistics(env)
-        env = gym.wrappers.ClipAction(env)
+        # env = gym.wrappers.ClipAction(env)
         # env = gym.wrappers.NormalizeObservation(env)
         # env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
         # env = gym.wrappers.NormalizeReward(env, gamma=gamma)
         # env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
+        env = RescaleActionV0(env, -1, 1)
+        env = gym.wrappers.ClipAction(env)
+        env.reset(seed=config["seed"])
         return env
     return thunk
 
@@ -83,7 +86,7 @@ def train_cleanrl(config):
 
     # env setup
     envs = gym.vector.SyncVectorEnv(
-        [make_env(config["environment_name"]) for i in range(config["n_environments"])]
+        [make_env(config) for i in range(config["n_environments"])]
     )
     assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
 
