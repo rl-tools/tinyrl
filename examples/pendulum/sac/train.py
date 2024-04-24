@@ -7,6 +7,7 @@ seed = 0x1337
 def env_factory(**kwargs):
     env = gym.make("Pendulum-v1", **kwargs)
     env = RescaleActionV0(env, -1, 1) # wlog actions are normalized to [-1, 1] in RLtools
+    env = gym.wrappers.ClipAction(env)
     env.reset(seed=seed)
     return env
 

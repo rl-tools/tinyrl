@@ -7,6 +7,7 @@ def test_pendulum_sac():
     def env_factory():
         env = gym.make("Pendulum-v1")
         env = RescaleActionV0(env, -1, 1) # wlog actions are normalized to [-1, 1] in RLtools
+        env = gym.wrappers.ClipAction(env)
         env.reset(seed=seed)
         return env
 
