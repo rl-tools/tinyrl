@@ -10,6 +10,7 @@ def env_factory_factory(config, **kwargs):
     def env_factory(**kwargs):
         env = gym.make(config["environment_name"], **kwargs)
         env = RescaleActionV0(env, -1, 1) # wlog actions are normalized to [-1, 1] in RLtools
+        env = gym.wrappers.ClipAction(env)
         env.reset(seed=config["seed"])
         return env
     return env_factory

@@ -6,14 +6,17 @@ import time
 from dataclasses import dataclass
 
 import gymnasium as gym
+from gymnasium.experimental.wrappers import RescaleActionV0
 import numpy as np
 
 from evaluate_policy import evaluate_policy
 
-def make_env(env_id, seed):
+def make_env(config):
     def thunk():
-        env = gym.make(env_id)
-        env.action_space.seed(seed)
+        env = gym.make(config["environment_name"])
+        env = RescaleActionV0(env, -1, 1)
+        env = gym.wrappers.ClipAction(env)
+        env.reset(seed=config["seed"])
         return env
     return thunk
 
@@ -112,7 +115,7 @@ def train_cleanrl(config):
     device = torch.device("cpu")
 
     # env setup
-    envs = gym.vector.SyncVectorEnv([make_env(config["environment_name"], config["seed"])])
+    envs = gym.vector.SyncVectorEnv([make_env(config)])
     assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
 
     max_action = float(envs.single_action_space.high[0])

@@ -1,5 +1,6 @@
 from evaluate_policy import evaluate_policy
 import gymnasium as gym
+from gymnasium.experimental.wrappers import RescaleActionV0
 import numpy as np
 
 default_config = {}
@@ -14,6 +15,8 @@ def train_sb3(config):
     np.random.seed(config["seed"])
     torch.manual_seed(config["seed"])
     env = gym.make(config["environment_name"])
+    env = RescaleActionV0(env, -1, 1)
+    env = gym.wrappers.ClipAction(env)
     env.reset(seed=config["seed"])
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
         return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]])
