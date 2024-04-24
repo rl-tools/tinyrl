@@ -2,6 +2,7 @@ import numpy as np
 import os
 import sac
 import ppo
+from tinyrl import CACHE_PATH
 
 TINYRL_FULL_RUN = "TINYRL_FULL_RUN" in os.environ
 
@@ -146,7 +147,7 @@ if __name__ == "__main__":
     else:
         print("Using PPO", flush=True)
         if config["library"] == "tinyrl":
-            print("Using PPO")
+            print(f"Using TinyRL PPO (Cache path: {CACHE_PATH})")
             returns = ppo.train_tinyrl(config, verbose=args.verbose)
         elif config["library"] == "sb3":
             print("Using Stable-Baselines3")

@@ -5,7 +5,7 @@ from evaluate_policy import evaluate_policy
 import numpy as np
 
 default_config = {
-    "INITIAL_ACTION_STD": 1.0
+    "INITIAL_ACTION_STD": 0.5 # this should be half because for the pendulum the output range is half due to tanh squashing + rescaling
 }
 def env_factory_factory(config, **kwargs):
     def env_factory(**kwargs):
