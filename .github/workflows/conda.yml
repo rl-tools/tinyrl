@@ -49,6 +49,7 @@ jobs:
       env:
         TINYRL_FORCE_RECOMPILE: ""
         TINYRL_FORCE_COMPILE_VERBOSE: ""
+        TINYRL_DISABLE_PYTORCH_IMPORT_TEST: ""
     - name: Test with pytest (force MKL)
       if: matrix.mkl == 'yes'
       env: 

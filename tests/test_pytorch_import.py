@@ -1,13 +1,16 @@
-import torch
-import torch.nn as nn
-from tinyrl import CACHE_PATH
-from tinyrl.onnx import load_mlp, evaluate
-from tinyrl.onnx import render
-from tinyrl import load_checkpoint_from_path
-
 import os
 
+if not "TINYRL_DISABLE_PYTORCH_IMPORT_TEST" in os.environ:
+    import torch
+    import torch.nn as nn
+    from tinyrl import CACHE_PATH
+    from tinyrl.onnx import load_mlp, evaluate
+    from tinyrl.onnx import render
+    from tinyrl import load_checkpoint_from_path
+
 def test_pytorch_import():
+    if "TINYRL_DISABLE_PYTORCH_IMPORT_TEST" in os.environ:
+        return
     torch.manual_seed(0)
 
     n_input_features = 4
