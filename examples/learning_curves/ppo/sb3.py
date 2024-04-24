@@ -1,5 +1,6 @@
 from evaluate_policy import evaluate_policy
 import gymnasium as gym
+from gymnasium.experimental.wrappers import RescaleActionV0
 import numpy as np
 
 default_config = {}

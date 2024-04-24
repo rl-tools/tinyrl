@@ -5,6 +5,7 @@ import random
 import time
 
 import gymnasium as gym
+from gymnasium.experimental.wrappers import RescaleActionV0
 import numpy as np
 from evaluate_policy import evaluate_policy
 
@@ -77,7 +78,7 @@ def train_cleanrl(config):
     minibatch_size = config["batch_size"]
     num_iterations = config["n_steps"]
     # TRY NOT TO MODIFY: seeding
-    random.seed(config["seed"])
+    seed = config["seed"]
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
