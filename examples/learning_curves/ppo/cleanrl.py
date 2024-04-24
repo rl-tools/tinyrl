@@ -75,8 +75,9 @@ def train_cleanrl(config):
     num_iterations = config["n_steps"]
     # TRY NOT TO MODIFY: seeding
     random.seed(config["seed"])
-    np.random.seed(config["seed"])
-    torch.manual_seed(config["seed"])
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
 
     device = torch.device("cpu")
 
@@ -100,7 +101,7 @@ def train_cleanrl(config):
     # TRY NOT TO MODIFY: start the game
     global_step = 0
     start_time = time.time()
-    next_obs, _ = envs.reset(seed=config["seed"])
+    next_obs, _ = envs.reset(seed=seed)
     next_obs = torch.Tensor(next_obs).to(device)
     next_done = torch.zeros(config["n_environments"]).to(device)
 
