@@ -68,5 +68,6 @@ On macOS TinyRL automatically uses Accelerate. To use MKL on linux you can insta
 pip install tinyrl[mkl]
 ```
 
+# Windows
 
-<!-- Note that (silent) issues can arise when using MKL and importing `torch` in the same process. If for some reason you need to use TinyRL and `torch` in the same process you can fall back to using e.g. the default blas on your system (e.g. `OpenBLAS`). We found `OpenBLAS` to be up to 4x slower than Intel MKL, though. -->
+TinyRL also works on Windows but MKL is not integrated, yet. Please make sure to install Python from the installer from the Python website and not using the Windows Store Python version. The latter resides in a directory that requires admin privileges even for read access. Due to the just-in-time compilation of RLtools we need to be able to read the Python header and library files. After installing the right Python version the easies way to run TinyRL is by opening the cloned folder in Visual Studio Code and launching the preconfigured targets. Make sure to start Visual Studio Code from the Visual Studio Prompt (e.g. `Developer Command Prompt for VS 2022`) by running `code` so that `cl.exe` (MSVC) is available in the environment. 
