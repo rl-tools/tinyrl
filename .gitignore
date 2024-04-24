@@ -8,5 +8,8 @@
 a.out
 /results
 /figures
+*.exp
+*.lib
+*.obj
 
 *.pickle

@@ -2,6 +2,7 @@ import os, math
 import inspect
 from .render import render, sanitize_values
 from .training import compile_training
+from .compile import compile_option
 
 from .. import CACHE_PATH
 
@@ -77,7 +78,7 @@ def PPO(env_factory, # can be either a lambda that creates a new Gym-like enviro
     if new_config:
         print('New PPO config detected, forcing recompilation...')
     
-    loop_core_config_search_path_flag = f'-I{render_output_directory}'
-    loop_core_config_flag = "-DTINYRL_USE_LOOP_CORE_CONFIG"
+    loop_core_config_search_path_flag = compile_option("header_search_path", render_output_directory)
+    loop_core_config_flag = compile_option("macro_definition", "TINYRL_USE_LOOP_CORE_CONFIG")
     flags = [loop_core_config_search_path_flag, loop_core_config_flag]
     return compile_training(module_name, env_factory, flags, verbose=verbose, force_recompile=(force_recompile or new_config), enable_evaluation=enable_evaluation, evaluation_interval=evaluation_interval, num_evaluation_episodes=num_evaluation_episodes, **kwargs)

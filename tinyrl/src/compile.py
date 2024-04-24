@@ -2,6 +2,28 @@ import os, sys, sysconfig, shutil, subprocess, re, keyword, platform, warnings
 import pybind11
 from .. import CACHE_PATH
 
+
+def compile_option(type, option):
+    if option is None:
+        return ""
+    if sys.platform in ["linux", "darwin"]:
+        if type == "header_search_path":
+            return f"-I{option}"
+        elif type == "macro_definition":
+            return f"-D{option}"
+        else:
+            raise Exception(f"Unknown option type {type}")
+    elif sys.platform.startswith("win"):
+        if type == "header_search_path":
+            return f"/I{option}"
+        elif type == "macro_definition":
+            return f"/D{option}"
+        else:
+            raise Exception(f"Unknown option type {type}")
+    else:
+        raise Exception(f"Unknown platform {sys.platform}")
+
+
 absolute_path = os.path.dirname(os.path.abspath(__file__))
 
 def is_valid_module_name(s):
@@ -44,21 +66,24 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     lto_flag = '' #'-flto' if not sys.platform.startswith('win') else '/GL'
     pic_flag = '-fPIC' if not sys.platform.startswith('win') else '/LD'
     link_stdlib_flag = '-stdlib=libc++' if sys.platform == 'darwin' else ''
-    verbose_flag = '-DTINYRL_VERBOSE' if verbose or "TINYRL_VERBOSE" in os.environ else ''
+    verbose_flag = compile_option("macro_definition", 'TINYRL_VERBOSE') if verbose or "TINYRL_VERBOSE" in os.environ else ''
 
-    # pybind_includes = subprocess.check_output(["python3", "-m", "pybind11", "--includes"]).decode().strip().split()
-    pybind_includes = [f"-I{pybind11.get_include()}"]
-    python_includes = ["-I" + sysconfig.get_paths()['include']] #subprocess.check_output(["python3-config", "--includes"]).decode().strip().split()
-    rl_tools_includes = ["-I" + str(os.path.join(absolute_path, "..", "external", "rl_tools", "include"))]
+    pybind_includes = [compile_option("header_search_path", pybind11.get_include())]
+    python_include_path = sysconfig.get_paths()['include']
+    if sys.platform.startswith('win'):
+        os.listdir(python_include_path) # check if the path is accessible on Windows (if not, you might need to uninstall the Windows Store version of python and install the installer version from the Python website)
+    python_includes = [compile_option("header_search_path", python_include_path)]
+    rl_tools_includes = [compile_option("header_search_path", str(os.path.join(absolute_path, "..", "external", "rl_tools", "include")))]
 
-    link_python_args = []
     if sys.platform in ["linux", "darwin"]:
         link_python_args = ["-L"+sysconfig.get_config_var('LIBDIR'), "-lpython" + sysconfig.get_config_var('VERSION')]
+    elif sys.platform.startswith('win'):
+        link_python_args = [f"/link /LIBPATH:"+os.path.join(sys.base_exec_prefix, "libs")]
     
     output_dir = f"{CACHE_PATH}/build/{module}"
     os.makedirs(output_dir, exist_ok=True)
     cmd_path = os.path.join(output_dir, f"cmd.txt")
-    output_path = os.path.join(output_dir, f"module.so")
+    output_path = os.path.join(output_dir, f"module.so" if not sys.platform.startswith('win') else f"module.pyd")
 
     compilers = find_compiler()
 
@@ -81,8 +106,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             link_math_flag,
             link_stdlib_flag,
             *link_python_args,
-            "-o",
-            output_path
+            *(["-o", output_path] if not sys.platform.startswith('win') else [f"/OUT:{output_path}"]),
         ]
         for compiler in compilers
     ]
@@ -96,6 +120,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             print(f"Compiling the TinyRL interface...", flush=True)
             verbose_actual = verbose or "TINYRL_FORCE_COMPILE_VERBOSE" in os.environ
             run_kwargs = {} if verbose_actual else {"capture_output": True, "text": True}
+            print(f"Command: {command_string}", flush=True) if verbose_actual else None
             result = subprocess.run(command_string, check=False, shell=True, **run_kwargs)
             if result.returncode != 0:
                 print("Command: ")
