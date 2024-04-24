@@ -119,7 +119,8 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
         for compiler, cmd, command_string in zip(compilers, cmds, command_strings):
             print(f"Compiling the TinyRL interface...", flush=True)
             verbose_actual = verbose or "TINYRL_FORCE_COMPILE_VERBOSE" in os.environ
-            run_kwargs = {} if verbose_actual else {"capture_output": True, "text": True}
+            run_kwargs = {"cwd": output_dir} if sys.platform.startswith('win') else {}
+            run_kwargs = {**run_kwargs, **({} if verbose_actual else {"capture_output": True, "text": True})}
             print(f"Command: {command_string}", flush=True) if verbose_actual else None
             result = subprocess.run(command_string, check=False, shell=True, **run_kwargs)
             if result.returncode != 0:
