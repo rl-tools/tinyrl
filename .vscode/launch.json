@@ -369,6 +369,18 @@
             ]
         },
         {
+            "name": "Learning Curves Analyze Particular",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/analyze.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--input-dir", "./examples/learning_curves/results",
+                "--output-dir", "./figures",
+            ]
+        },
+        {
             "name": "Learning Curves Analyze Remote",
             "type": "python",
             "request": "launch",
