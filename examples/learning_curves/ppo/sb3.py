@@ -27,7 +27,7 @@ def train_sb3(config):
     # envs = DummyVecEnv([lambda: env_factory(seed=(config["seed"]*config["n_environments"] + i)) for i in range(config["n_environments"])])
     envs = env_factory()
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
-        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], optimizer_kwargs={}, activation_fn=torch.nn.ReLU, share_features_extractor=False, ortho_init=False)
+        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], optimizer_kwargs={}, activation_fn=torch.nn.ReLU, share_features_extractor=False, ortho_init=False, log_std_init=np.log(config["initial_action_std"]))
     model = SB3_PPO(policy_factory, envs, 
         learning_rate=config["learning_rate"],
         ent_coef=config["entropy_coefficient"],

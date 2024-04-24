@@ -26,6 +26,7 @@ def train_tinyrl(config, use_python_environment=True, verbose=False):
     from tinyrl import PPO
     example_env = env_factory() 
     kwargs = {
+        **default_config,
         "OPTIMIZER_ALPHA": config["learning_rate"],
         "ACTION_ENTROPY_COEFFICIENT": config["entropy_coefficient"],
         "N_EPOCHS": config["n_epochs"],
@@ -39,8 +40,8 @@ def train_tinyrl(config, use_python_environment=True, verbose=False):
         "EPSILON_CLIP": config["clip_coef"],
         "NORMALIZE_ADVANTAGE": config["norm_advantage"],
         "STEP_LIMIT": config["n_steps"],
-        "OPTIMIZER_EPSILON": 1e-8, # PyTorch default
-        **default_config
+        "OPTIMIZER_EPSILON": 1e-8, # PyTorch default,
+        "INITIAL_ACTION_STD": config["initial_action_std"],
     }
     interface_name = str(config["seed"])
     if use_python_environment:
