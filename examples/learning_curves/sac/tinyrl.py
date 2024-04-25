@@ -42,9 +42,10 @@ def train_tinyrl(config, use_python_environment=True):
         sac = SAC(custom_environment, interface_name=interface_name, **kwargs)
     state = sac.State(config["seed"])
     returns = []
+    render = False
     for step_i in range(config["n_steps"]):
         if step_i % config["evaluation_interval"] == 0:
-            current_returns = evaluate_policy(lambda observation: np.tanh(state.action(observation)), config, env_factory)
+            current_returns = evaluate_policy(lambda observation: np.tanh(state.action(observation)), config, env_factory, render=render)
             print(f"Step {step_i}/{config['n_steps']}: {np.mean(current_returns)}", flush=True)
             returns.append(current_returns)
         state.step()
