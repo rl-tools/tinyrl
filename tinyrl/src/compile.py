@@ -76,14 +76,20 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     rl_tools_includes = [compile_option("header_search_path", str(os.path.join(absolute_path, "..", "external", "rl_tools", "include")))]
 
     if sys.platform in ["linux", "darwin"]:
-        link_python_args = ["-L"+sysconfig.get_config_var('LIBDIR'), "-lpython" + sysconfig.get_config_var('VERSION')]
+        extension = "so"
+        if platform.python_implementation() != "PyPy":
+            link_python_args = ["-L"+sysconfig.get_config_var('LIBDIR'), "-lpython" + sysconfig.get_config_var('VERSION')]
+        else:
+            link_python_args = ["-L"+sysconfig.get_config_var('LIBDIR'), f"-lpypy{sysconfig.get_config_var('VERSION')}-c"]
+            extension = f"pypy{sys.version_info.major}{sys.version_info.minor}-pp{sys.pypy_version_info.major}{sys.pypy_version_info.minor}-{sys.platform}.so"
     elif sys.platform.startswith('win'):
+        extension = "pyd"
         link_python_args = [f"/link /LIBPATH:"+os.path.join(sys.base_exec_prefix, "libs")]
     
     output_dir = f"{CACHE_PATH}/build/{module}"
     os.makedirs(output_dir, exist_ok=True)
     cmd_path = os.path.join(output_dir, f"cmd.txt")
-    output_path = os.path.join(output_dir, f"module.so" if not sys.platform.startswith('win') else f"module.pyd")
+    output_path = os.path.join(output_dir, f"module.{extension}")
 
     compilers = find_compiler()
 
