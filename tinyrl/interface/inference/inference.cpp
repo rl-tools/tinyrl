@@ -46,7 +46,8 @@ pybind11::array_t<T> evaluate(const pybind11::array_t<T>& input){
     }
     rlt::MatrixStatic<rlt::matrix::Specification<T, TI, 1, MODEL_TYPE::OUTPUT_DIM>> output_rlt;
     rlt::malloc(device, output_rlt);
-    rlt::evaluate(device, policy::model, input_rlt, output_rlt, buffer);
+    bool rng = false;
+    rlt::evaluate(device, policy::model, input_rlt, output_rlt, buffer, rng);
 
     std::vector<T> output(MODEL_TYPE::OUTPUT_DIM);
 
