@@ -37,8 +37,13 @@ def find_compiler():
     windows_compilers = ["cl"]
     compilers = unix_compilers if (sys.platform in ["linux", "darwin"]) else windows_compilers
     compilers = [compiler for compiler in compilers if shutil.which(compiler) is not None]
-    raw_platform_compiler = platform.python_compiler().startswith("GCC")
-    platform_compiler = "g++" if raw_platform_compiler else None
+    raw_platform_compiler = platform.python_compiler()
+    if raw_platform_compiler.startswith("MSC"):
+        platform_compiler = "cl"
+    elif raw_platform_compiler.startswith("GCC"):
+        platform_compiler = "g++"
+    else:
+        platform_compiler = None
     if platform_compiler is None:
         warnings.warn(f"The platform compiler {raw_platform_compiler} is not recognized.")
     else:
