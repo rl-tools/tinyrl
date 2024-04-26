@@ -98,7 +98,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             extension = f"pypy{sys.version_info.major}{sys.version_info.minor}-pp{sys.pypy_version_info.major}{sys.pypy_version_info.minor}-{sys.platform}.so"
     elif sys.platform.startswith('win'):
         extension = "pyd"
-        link_python_args = [f"/link \"/LIBPATH:"+os.path.join(sys.base_exec_prefix, "libs")+"\""]
+        link_python_args = [f"/link /LIBPATH:"+os.path.join(sys.base_exec_prefix, "libs")]
     
     output_dir = f"{CACHE_PATH}/build/{module}"
     os.makedirs(output_dir, exist_ok=True)
@@ -121,12 +121,12 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             *pybind_includes,
             *python_includes,
             *rl_tools_includes,
-            f"\"{source}\"",
+            f"{source}",
             *flags,
             link_math_flag,
             link_stdlib_flag,
             *link_python_args,
-            *(["-o", output_path] if not sys.platform.startswith('win') else [f"\"/OUT:{output_path}\""]),
+            *(["-o", output_path] if not sys.platform.startswith('win') else [f"/OUT:{output_path}"]),
         ])
         for compiler in compilers
     ]
