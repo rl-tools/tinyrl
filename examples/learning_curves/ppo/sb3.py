@@ -57,11 +57,9 @@ def train_sb3(config):
                 def policy(observation):
                     return model.predict(observation, deterministic=True)[0]
                 current_returns = evaluate_policy(policy, config, env_factory)
-                # print(f"Step {self.evaluation_step_i}: {np.mean(current_returns)} log_std: {self.model.policy.log_std}", flush=True)
+                print(f"Step {self.evaluation_step_i}/{config['n_steps']}: {np.mean(current_returns)}", flush=True)
                 returns.append(current_returns)
             self.evaluation_step_i += 1
 
     model.learn(total_timesteps=config["n_environments"]*config["on_policy_runner_steps_per_env"]*config["n_steps"], callback=CustomCallback())
-    # for evaluation_step_i in range(0, config["n_steps"], config["evaluation_interval"]):
-        # model.learn(total_timesteps=config["n_environments"]*config["on_policy_runner_steps_per_env"])
     return returns

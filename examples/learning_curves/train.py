@@ -65,18 +65,18 @@ environment_configs = {
 
 library_configs = {
     "SAC":{
-        "Pendulum-v1": {
-            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Pendulum-v1"]},
-            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Pendulum-v1"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
-            "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
-        },
-        "Hopper-v4": {
-            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
-            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
-            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
-            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
-        },
+        # "Pendulum-v1": {
+        #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Pendulum-v1"]},
+        #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Pendulum-v1"]},
+        #     "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
+        #     "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
+        # },
+        # "Hopper-v4": {
+        #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
+        #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
+        #     "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
+        #     "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
+        # },
         # "Ant-v4": {
         #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Ant-v4"]},
         #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Ant-v4"]},
@@ -89,6 +89,7 @@ library_configs = {
             "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Pendulum-v1"]},
             "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
             "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
+            "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
         },
     }
 }
@@ -160,6 +161,9 @@ if __name__ == "__main__":
         elif config["library"] == "cleanrl":
             print("Using CleanRL")
             returns = ppo.train_cleanrl(config)
+        elif config["library"] == "sbx":
+            print("Using SBX")
+            returns = ppo.train_sbx(config)
         else:
             raise ValueError(f"Unknown library: {config['library']}")
     returns = np.array(returns)
