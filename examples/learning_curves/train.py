@@ -61,7 +61,7 @@ environment_configs = {
         },
         "Hopper-v4": {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
-            "n_steps": 10000, # ~ 300k steps
+            "n_steps": 1000, # ~ 300k steps
             "evaluation_interval": 10,
             "learning_rate": 1e-4,
             "entropy_coefficient": 0.0,
@@ -70,7 +70,7 @@ environment_configs = {
             "gae_lambda": 0.95,
             "batch_size": 64,
             "hidden_dim": 64,
-            "on_policy_runner_steps_per_env": 256,
+            "on_policy_runner_steps_per_env": 1024,
             "n_environments": 4,
             "clip_coef": 0.2,
             "norm_advantage": True,
@@ -107,7 +107,7 @@ library_configs = {
         #     "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
         #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
         # },
-        "Hopper-v4": {
+        "Ant-v4": {
             "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Hopper-v4"]},
             "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Hopper-v4"]},
             "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Hopper-v4"]},
