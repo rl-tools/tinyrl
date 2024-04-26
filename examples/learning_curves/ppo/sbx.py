@@ -3,7 +3,9 @@ import gymnasium as gym
 from gymnasium.experimental.wrappers import RescaleActionV0
 import numpy as np
 
-default_config = {}
+default_config = {
+    "max_grad_norm": np.inf
+}
 
 def train_sbx(config):
     import os, random

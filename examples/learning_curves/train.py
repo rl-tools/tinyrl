@@ -46,7 +46,6 @@ environment_configs = {
             "n_seeds": 100 if TINYRL_FULL_RUN else 10,
             "n_steps": 73, # ~ 300k steps
             "evaluation_interval": 1,
-            # "num_evaluation_episodes": 10,
             "learning_rate": 1e-3,
             "entropy_coefficient": 0.0,
             "n_epochs": 2,
@@ -59,6 +58,23 @@ environment_configs = {
             "clip_coef": 0.2,
             "norm_advantage": True,
             "initial_action_std": 2.0
+        },
+        "Hopper-v4": {
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
+            "n_steps": 10000, # ~ 300k steps
+            "evaluation_interval": 10,
+            "learning_rate": 1e-4,
+            "entropy_coefficient": 0.0,
+            "n_epochs": 5,
+            "gamma": 0.99,
+            "gae_lambda": 0.95,
+            "batch_size": 64,
+            "hidden_dim": 64,
+            "on_policy_runner_steps_per_env": 256,
+            "n_environments": 4,
+            "clip_coef": 0.2,
+            "norm_advantage": True,
+            "initial_action_std": 1
         },
     }
 }
@@ -85,11 +101,17 @@ library_configs = {
         # }
     },
     "PPO":{
-        "Pendulum-v1": {
-            "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Pendulum-v1"]},
-            "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
-            "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
-            "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
+        # "Pendulum-v1": {
+        #     "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
+        # },
+        "Hopper-v4": {
+            "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Hopper-v4"]},
+            "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Hopper-v4"]},
+            "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Hopper-v4"]},
+            "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Hopper-v4"]}
         },
     }
 }
