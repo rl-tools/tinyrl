@@ -71,12 +71,12 @@ library_configs = {
             "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
             "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
         },
-        # "Hopper-v4": {
-        #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
-        #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
-        #     "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
-        #     "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
-        # },
+        "Hopper-v4": {
+            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
+            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
+            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
+            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
+        },
         # "Ant-v4": {
         #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Ant-v4"]},
         #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Ant-v4"]},
