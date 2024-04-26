@@ -3,21 +3,30 @@ import pybind11
 from .. import CACHE_PATH
 
 
+def wrap_quotes(s):
+    if type(s) == str:
+        if len(s) == 0:
+            return ""
+        else:
+            return f"\"{s}\""
+    else:
+        return [wrap_quotes(x) for x in s]
+
 def compile_option(type, option):
     if option is None:
         return ""
     if sys.platform in ["linux", "darwin"]:
         if type == "header_search_path":
-            return f"\"-I{option}\""
+            return f"-I{option}"
         elif type == "macro_definition":
-            return f"\"-D{option}\""
+            return f"-D{option}"
         else:
             raise Exception(f"Unknown option type {type}")
     elif sys.platform.startswith("win"):
         if type == "header_search_path":
-            return f"\"/I{option}\""
+            return f"/I{option}"
         elif type == "macro_definition":
-            return f"\"/D{option}\""
+            return f"/D{option}"
         else:
             raise Exception(f"Unknown option type {type}")
     else:
@@ -99,7 +108,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
     compilers = find_compiler()
 
     cmds = [
-        [
+        wrap_quotes([
             compiler,
             shared_flag, 
             pic_flag,
@@ -118,7 +127,7 @@ def compile(source, module, flags=[], enable_optimization=True, force_recompile=
             link_stdlib_flag,
             *link_python_args,
             *(["-o", output_path] if not sys.platform.startswith('win') else [f"\"/OUT:{output_path}\""]),
-        ]
+        ])
         for compiler in compilers
     ]
     command_strings = [" ".join(cmd) for cmd in cmds]

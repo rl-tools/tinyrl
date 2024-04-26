@@ -19,7 +19,7 @@ custom_environment = {
 }
 
 
-for env_name, selected_env in [("Gymnasium", env_factory), ("RLtools", custom_environment)]:
+for env_name, selected_env in [("RLtools", custom_environment), ("Gymnasium", env_factory)]:
     print(f"Training using the {color(env_name, 'red')} environment")
     ppo = PPO(
         selected_env,
