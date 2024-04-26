@@ -12,8 +12,8 @@ import numpy as np
 from evaluate_policy import evaluate_policy
 
 def make_env(config):
-    def thunk():
-        env = gym.make(config["environment_name"])
+    def thunk(**kwargs):
+        env = gym.make(config["environment_name"], **kwargs)
         env = RescaleActionV0(env, -1, 1)
         env = gym.wrappers.ClipAction(env)
         env.reset(seed=config["seed"])
@@ -175,7 +175,7 @@ def train_cleanrl(config):
         if global_step % config["evaluation_interval"] == 0:
             def policy(observation):
                 return actor.get_action(torch.Tensor(observation).to(device).unsqueeze(0))[0][0].detach().cpu().numpy()
-            current_returns = evaluate_policy(policy, config, make_env(config))
+            current_returns = evaluate_policy(policy, config, make_env(config), render=config["render"] and global_step >= 0)
             print(f"Step: {global_step}, Returns: {np.array(current_returns).mean()}", flush=True)
             returns.append(current_returns)
 

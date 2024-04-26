@@ -7,6 +7,10 @@ from tinyrl import CACHE_PATH
 TINYRL_FULL_RUN = "TINYRL_FULL_RUN" in os.environ
 
 
+global_config = {
+    "render": False
+}
+
 environment_configs = {
     "SAC": {
         "Pendulum-v1": {
@@ -100,7 +104,7 @@ def flatten_configs(algorithm_filter=None, environment_filter=None, library_filt
                         if library_filter is None or library_name == library_filter:
                             for seed in range(config["seed_offset"] if "seed_offset" in config else 0, config["n_seeds"]):
                                 config_diff = {"algorithm": algorithm, "environment_name": environment_name, "library": library_name, "seed": seed}
-                                config = {**config, **config_diff}
+                                config = {**global_config, **config, **config_diff}
                                 flat_configs.append(config)
                                 flat_config_id += 1
     return flat_configs

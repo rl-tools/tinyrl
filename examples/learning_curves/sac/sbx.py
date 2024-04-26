@@ -31,7 +31,7 @@ def train_sbx(config):
         model.learn(total_timesteps=config["evaluation_interval"], reset_num_timesteps=False)
         def policy(observation):
             return model.predict(observation, deterministic=True)[0]
-        current_returns = evaluate_policy(policy, config, env_factory, render=render)
+        current_returns = evaluate_policy(policy, config, env_factory, render=config["render"] and evaluation_step_i>=0)
         print(f"Step {evaluation_step_i * config['evaluation_interval']}/{config['n_steps']}: {np.mean(current_returns)}", flush=True)
         returns.append(current_returns)
     return returns

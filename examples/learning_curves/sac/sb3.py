@@ -14,8 +14,8 @@ def train_sb3(config):
     random.seed(config["seed"])
     np.random.seed(config["seed"])
     torch.manual_seed(config["seed"])
-    def env_factory():
-        env = gym.make(config["environment_name"])
+    def env_factory(**kwargs):
+        env = gym.make(config["environment_name"], **kwargs)
         env = RescaleActionV0(env, -1, 1)
         env = gym.wrappers.ClipAction(env)
         env.reset(seed=config["seed"])
@@ -28,7 +28,7 @@ def train_sb3(config):
     for evaluation_step_i in range(0, config["n_steps"], config["evaluation_interval"]):
         def policy(observation):
             return model.predict(observation, deterministic=True)[0]
-        current_returns = evaluate_policy(policy, config, env_factory)
+        current_returns = evaluate_policy(policy, config, env_factory, render=config["render"] and evaluation_step_i>=0)
         print(f"Step {evaluation_step_i}: {np.mean(current_returns)}", flush=True)
         returns.append(current_returns)
         model.learn(total_timesteps=config["evaluation_interval"], reset_num_timesteps=False)

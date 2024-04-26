@@ -45,7 +45,7 @@ def train_tinyrl(config, use_python_environment=True):
     render = False
     for step_i in range(config["n_steps"]):
         if step_i % config["evaluation_interval"] == 0:
-            current_returns = evaluate_policy(lambda observation: np.tanh(state.action(observation)), config, env_factory, render=render)
+            current_returns = evaluate_policy(lambda observation: np.tanh(state.action(observation)), config, env_factory, render=config["render"] and step_i >= 0)
             print(f"Step {step_i}/{config['n_steps']}: {np.mean(current_returns)}", flush=True)
             returns.append(current_returns)
         state.step()
