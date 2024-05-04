@@ -23,7 +23,7 @@ environment_configs = {
             "batch_size": 100,
         },
         "Hopper-v4": {
-            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
+            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 1000,
             "hidden_dim": 64,
