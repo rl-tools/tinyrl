@@ -101,13 +101,13 @@ library_configs = {
         # }
     },
     "PPO":{
-        "Pendulum-v1": {
-            "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Pendulum-v1"]},
-            "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
-            "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
-            "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Pendulum-v1"]},
-            "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
-        },
+        # "Pendulum-v1": {
+        #     "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Pendulum-v1"]},
+        #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
+        # },
         "Hopper-v4": {
             "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Hopper-v4"]},
             "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Hopper-v4"]},
