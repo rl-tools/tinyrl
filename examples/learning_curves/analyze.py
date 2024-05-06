@@ -60,7 +60,7 @@ if __name__ == "__main__":
 
         horizontal = range(0, config["n_steps"], config["evaluation_interval"])
         ax.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
-        ax.plot(horizontal, returns_min, label=f"{library_lookup[library]} (min)")
+        # ax.plot(horizontal, returns_min, label=f"{library_lookup[library]} (min)")
         # ax.plot(horizontal, returns_median, label=f"{library_lookup[library]} (median {returns_median[-1]:.2f}, std {returns_std[-1]:.2f})")
         label = f"{library_lookup[library]} (mean: {returns_mean[-1]:.2f}, std: {returns_std[-1]:.2f})"
         ax.plot(horizontal, returns_mean, label=label)
