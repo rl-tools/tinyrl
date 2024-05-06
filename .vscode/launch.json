@@ -279,6 +279,18 @@
             ]
         },
         {
+            "name": "Learning Curves Train cfg 43",
+            "type": "python",
+            "request": "launch",
+            "program": "examples/learning_curves/train.py",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "args": [
+                "--output-dir", "results",
+                "--config", "43"
+            ]
+        },
+        {
             "name": "Learning Curves Train cfg 3 (Hopper-v4)",
             "type": "python",
             "request": "launch",

@@ -32,7 +32,7 @@ default_config = {
     "vf_coef": 1.0,
 }
 
-def train_cleanrl(config):
+def train_cleanrltrunc(config):
     import torch
     import torch.nn as nn
     import torch.optim as optim
