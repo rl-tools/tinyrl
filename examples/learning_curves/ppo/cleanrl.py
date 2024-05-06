@@ -100,7 +100,8 @@ def train_cleanrl(config):
     actions = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"]) + envs.single_action_space.shape).to(device)
     logprobs = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"])).to(device)
     rewards = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"])).to(device)
-    dones = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"])).to(device)
+    truncated = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"])).to(device)
+    terminated = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"])).to(device)
     values = torch.zeros((config["on_policy_runner_steps_per_env"], config["n_environments"])).to(device)
 
     # TRY NOT TO MODIFY: start the game
@@ -130,7 +131,6 @@ def train_cleanrl(config):
         for step in range(0, config["on_policy_runner_steps_per_env"]):
             global_step += config["n_environments"]
             obs[step] = next_obs
-            dones[step] = next_done
 
             # ALGO LOGIC: action logic
             with torch.no_grad():
@@ -141,24 +141,26 @@ def train_cleanrl(config):
 
             # TRY NOT TO MODIFY: execute the game and log data.
             next_obs, reward, terminations, truncations, infos = envs.step(action.cpu().numpy())
-            next_done = np.logical_or(terminations, truncations)
+            # next_done = np.logical_or(terminations, truncations)
             rewards[step] = torch.tensor(reward).to(device).view(-1)
-            next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(next_done).to(device)
+            # next_obs, next_done = torch.Tensor(next_obs).to(device), torch.Tensor(next_done).to(device)
+            terminated[step] = torch.Tensor(terminations)
+            truncated[step] = torch.Tensor(np.logical_or(terminations, truncations))
 
         # bootstrap value if not done
         with torch.no_grad():
-            next_value = agent.get_value(next_obs).reshape(1, -1)
+            # next_value = agent.get_value(next_obs).reshape(1, -1)
             advantages = torch.zeros_like(rewards).to(device)
             lastgaelam = 0
             for t in reversed(range(config["on_policy_runner_steps_per_env"])):
                 if t == config["on_policy_runner_steps_per_env"] - 1:
-                    nextnonterminal = 1.0 - next_done
-                    nextvalues = next_value
+                    current_truncated = 1
+                    next_value = 0
                 else:
-                    nextnonterminal = 1.0 - dones[t + 1]
-                    nextvalues = values[t + 1]
-                delta = rewards[t] + config["gamma"] * nextvalues * nextnonterminal - values[t]
-                advantages[t] = lastgaelam = delta + config["gamma"] * config["gae_lambda"] * nextnonterminal * lastgaelam
+                    current_truncated = truncated[t]
+                    next_value = values[t + 1] * (1-terminated[t])
+                delta = (rewards[t] + config["gamma"] * next_value - values[t]) * (1-current_truncated)
+                advantages[t] = lastgaelam = delta + config["gamma"] * config["gae_lambda"] * (1-current_truncated) * lastgaelam
             returns = advantages + values
 
         # flatten the batch
