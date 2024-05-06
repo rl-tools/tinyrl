@@ -159,8 +159,8 @@ def train_cleanrltrunc(config):
                 else:
                     current_truncated = truncated[t]
                     next_value = values[t + 1] * (1-terminated[t])
-                delta = (rewards[t] + config["gamma"] * next_value - values[t]) * (1-current_truncated)
-                advantages[t] = lastgaelam = delta + config["gamma"] * config["gae_lambda"] * (1-current_truncated) * lastgaelam
+                delta = (rewards[t] + config["gamma"] * next_value - values[t]) * (1-current_truncated*(1-terminated[t])) # delta should be zero if truncated (but not due to termination) if terminated the delta should be based on a zero next_value
+                advantages[t] = lastgaelam = delta + config["gamma"] * config["gae_lambda"] * (1-current_truncated) * lastgaelam # in any case of truncation (truncation or termination) the advantage should be truncated
             returns = advantages + values
 
         # flatten the batch
