@@ -232,6 +232,9 @@ if __name__ == "__main__":
         elif config["library"] == "cleanrl":
             print("Using CleanRL")
             returns = ppo.train_cleanrl(config)
+        elif config["library"] == "cleanrltrunc":
+            print("Using CleanRL (Truncated)")
+            returns = ppo.train_cleanrltrunc(config)
         elif config["library"] == "sbx":
             print("Using SBX")
             returns = ppo.train_sbx(config)
