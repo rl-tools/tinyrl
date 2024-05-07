@@ -6,6 +6,7 @@ import numpy as np
 
 default_config = {
 }
+
 def env_factory_factory(config, **kwargs):
     def env_factory(**kwargs):
         env = gym.make(config["environment_name"], **kwargs)
@@ -22,11 +23,18 @@ def train_tinyrl(config, use_python_environment=True):
         "observation_dim": 3,
     }
     env_factory = env_factory_factory(config)
-    from tinyrl import SAC
+    from tinyrl import TD3
     example_env = env_factory() 
+    default_kwargs = {
+        "ACTOR_TRAINING_INTERVAL": 1, 
+        "CRITIC_TRAINING_INTERVAL": 1,
+        "ACTOR_TARGET_UPDATE_INTERVAL": 1,
+        "CRITIC_TARGET_UPDATE_INTERVAL": 1,
+        "N_ENVIRONMENTS": 1,
+    }
     kwargs = {
+        **default_kwargs,
         "STEP_LIMIT": config["n_steps"],
-        "ALPHA": 1,
         "ACTOR_BATCH_SIZE": config["batch_size"],
         "CRITIC_BATCH_SIZE": config["batch_size"],
         "OPTIMIZER_ALPHA": config["learning_rate"],
@@ -34,12 +42,15 @@ def train_tinyrl(config, use_python_environment=True):
         "ACTOR_HIDDEN_DIM": config["hidden_dim"],
         "CRITIC_HIDDEN_DIM": config["hidden_dim"],
         "N_WARMUP_STEPS": config["learning_starts"],
+        "TARGET_NEXT_ACTION_NOISE_STD": config["target_next_action_noise_std"],
+        "TARGET_NEXT_ACTION_NOISE_CLIP": config["target_next_action_noise_clip"],
+        "EXPLORATION_NOISE": config["exploration_noise"],
     }
     interface_name = str(config["seed"])
     if use_python_environment:
-        sac = SAC(env_factory, enable_evaluation=False, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
+        sac = TD3(env_factory, enable_evaluation=False, interface_name=interface_name, force_recompile=not "TINYRL_SKIP_FORCE_RECOMPILE" in os.environ, **kwargs)
     else:
-        sac = SAC(custom_environment, interface_name=interface_name, **kwargs)
+        sac = TD3(custom_environment, interface_name=interface_name, **kwargs)
     state = sac.State(config["seed"])
     returns = []
     render = False

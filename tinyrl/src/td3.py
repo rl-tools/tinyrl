@@ -45,6 +45,7 @@ def TD3(env_factory, # can be either a lambda that creates a new Gym-like enviro
     CRITIC_ACTIVATION_FUNCTION = "RELU",
     COLLECT_EPISODE_STATS = True,
     EPISODE_STATS_BUFFER_SIZE = 1000,
+    EXPLORATION_NOISE = 0.1,
     # optimizer
     OPTIMIZER_ALPHA=1e-3,
     OPTIMIZER_BETA_1=0.9,

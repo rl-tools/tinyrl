@@ -2,6 +2,7 @@ import numpy as np
 import os
 import sac
 import ppo
+import td3
 from tinyrl import CACHE_PATH
 
 TINYRL_FULL_RUN = "TINYRL_FULL_RUN" in os.environ
@@ -76,7 +77,45 @@ environment_configs = {
             "norm_advantage": True,
             "initial_action_std": 1
         },
-    }
+    },
+    "TD3": {
+        "Pendulum-v1": {
+            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
+            "n_steps": 20000,
+            "evaluation_interval": 100,
+            "hidden_dim": 64,
+            "learning_rate": 1e-3,
+            "learning_starts": 100,
+            "batch_size": 100,
+            "target_next_action_noise_std": 0.2,
+            "target_next_action_noise_clip": 0.5,
+            "exploration_noise": 0.1,
+        },
+        "Hopper-v4": {
+            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
+            "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
+            "evaluation_interval": 1000,
+            "hidden_dim": 64,
+            "learning_rate": 3e-4,
+            "learning_starts": 10000,
+            "batch_size": 128,
+            "target_next_action_noise_std": 0.2,
+            "target_next_action_noise_clip": 0.5,
+            "exploration_noise": 0.1,
+        },
+        "Ant-v4": {
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
+            "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
+            "evaluation_interval": 10000,
+            "hidden_dim": 256,
+            "learning_rate": 3e-4,
+            "learning_starts": 10000,
+            "batch_size": 256,
+            "target_next_action_noise_std": 0.2,
+            "target_next_action_noise_clip": 0.5,
+            "exploration_noise": 0.1,
+        }
+    },
 }
 
 library_configs = {
@@ -108,14 +147,22 @@ library_configs = {
         #     "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Pendulum-v1"]},
         #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Pendulum-v1"]}
         # },
-        "Hopper-v4": {
-            "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Hopper-v4"]},
-            "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Hopper-v4"]},
-            "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Hopper-v4"]},
-            "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Hopper-v4"]},
-            "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Hopper-v4"]}
+        # "Hopper-v4": {
+        #     "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Hopper-v4"]},
+        #     "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Hopper-v4"]},
+        #     "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Hopper-v4"]},
+        #     "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Hopper-v4"]},
+        #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Hopper-v4"]}
+        # },
+    },
+    "TD3":{
+        "Pendulum-v1": {
+            "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Pendulum-v1"]},
+            "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Pendulum-v1"]},
+            "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]},
+            "sbx": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]}
         },
-    }
+    },
 }
 
 def flatten_configs(algorithm_filter=None, environment_filter=None, library_filter=None):
@@ -174,7 +221,7 @@ if __name__ == "__main__":
             returns = sac.train_sbx(config)
         else:
             raise ValueError(f"Unknown library: {config['library']}")
-    else:
+    elif config["algorithm"] == "PPO":
         print("Using PPO", flush=True)
         if config["library"] == "tinyrl":
             print(f"Using TinyRL PPO (Cache path: {CACHE_PATH})")
@@ -190,6 +237,24 @@ if __name__ == "__main__":
             returns = ppo.train_sbx(config)
         else:
             raise ValueError(f"Unknown library: {config['library']}")
+    elif config["algorithm"] == "TD3":
+        print("Using TD3", flush=True)
+        if config["library"] == "tinyrl":
+            print("Using TinyRL", flush=True)
+            returns = td3.train_tinyrl(config)
+        elif config["library"] == "sb3":
+            print("Using Stable-Baselines3")
+            returns = td3.train_sb3(config)
+        elif config["library"] == "cleanrl":
+            print("Using CleanRL")
+            returns = td3.train_cleanrl(config)
+        elif config["library"] == "sbx":
+            print("Using SBX")
+            returns = td3.train_sbx(config)
+        else:
+            raise ValueError(f"Unknown library: {config['library']}")
+    else:
+        raise ValueError(f"Unknown algorithm: {config['algorithm']}")
     returns = np.array(returns)
     os.makedirs(args.output_dir, exist_ok=True)
     with open(os.path.join(args.output_dir, f"{run_name}.pickle"), 'wb') as f:
