@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 library_lookup = {
     "sb3": "Stable Baselines3",
     "cleanrl": "CleanRL",
+    "cleanrltrunc": "CleanRL (Fixed Truncation)",
     "tinyrl": "TinyRL / RLtools",
     "sbx": "SBX",
 }
