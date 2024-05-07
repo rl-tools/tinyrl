@@ -12,6 +12,7 @@ def train_sbx(config):
     from sbx import SAC as SBX_SAC
     from sbx.sac.policies import SACPolicy
     import torch
+    import jax
     random.seed(config["seed"])
     np.random.seed(config["seed"])
     torch.manual_seed(config["seed"])
@@ -23,7 +24,7 @@ def train_sbx(config):
         return env
     env = env_factory()
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
-        return SACPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]])
+        return SACPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], optimizer_kwargs={}, activation_fn=jax.nn.relu)
     model = SBX_SAC(policy_factory, env, learning_starts=config["learning_starts"], learning_rate=config["learning_rate"], batch_size=config["batch_size"], buffer_size=config["n_steps"])
     returns = []
     render = False

@@ -5,16 +5,15 @@ import numpy as np
 
 default_config = {}
 
-def train_sb3(config):
+def train_sbx(config):
     import os, random
     os.environ["CUDA_VISIBLE_DEVICES"] = ""
-    from stable_baselines3 import TD3 as SB3_TD3
-    from stable_baselines3.td3 import MlpPolicy
+    from sbx import TD3 as SB3_TD3
+    from sbx.td3.policies import TD3Policy
     from stable_baselines3.common.noise import NormalActionNoise
-    import torch
+    import jax
     random.seed(config["seed"])
     np.random.seed(config["seed"])
-    torch.manual_seed(config["seed"])
     def env_factory(**kwargs):
         env = gym.make(config["environment_name"], **kwargs)
         env = RescaleActionV0(env, -1, 1)
@@ -23,7 +22,7 @@ def train_sb3(config):
         return env
     env = env_factory()
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
-        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]])
+        return TD3Policy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], activation_fn=jax.nn.relu)
     model = SB3_TD3(policy_factory, env,
         learning_rate=config["learning_rate"],
         buffer_size=config["n_steps"],

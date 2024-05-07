@@ -23,7 +23,7 @@ def train_sb3(config):
         return env
     env = env_factory()
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
-        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]])
+        return MlpPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], activation_fn=torch.nn.ReLU)
     model = SB3_TD3(policy_factory, env,
         learning_rate=config["learning_rate"],
         buffer_size=config["n_steps"],
