@@ -16,8 +16,6 @@ namespace TINYRL_MODULE_NAME{
             static constexpr T GAMMA = $GAMMA;
             static constexpr TI ACTOR_BATCH_SIZE = $ACTOR_BATCH_SIZE;
             static constexpr TI CRITIC_BATCH_SIZE = $CRITIC_BATCH_SIZE;
-            static constexpr TI N_WARMUP_STEPS_CRITIC = $N_WARMUP_STEPS_CRITIC;
-            static constexpr TI N_WARMUP_STEPS_ACTOR = $N_WARMUP_STEPS_ACTOR;
             static constexpr TI CRITIC_TRAINING_INTERVAL = $CRITIC_TRAINING_INTERVAL;
             static constexpr TI ACTOR_TRAINING_INTERVAL = $ACTOR_TRAINING_INTERVAL;
             static constexpr TI CRITIC_TARGET_UPDATE_INTERVAL = $CRITIC_TARGET_UPDATE_INTERVAL;

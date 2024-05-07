@@ -26,14 +26,17 @@ def train_tinyrl(config, use_python_environment=True):
     from tinyrl import TD3
     example_env = env_factory() 
     default_kwargs = {
-        "ACTOR_TRAINING_INTERVAL": 1, 
+        "ACTOR_TRAINING_INTERVAL": 2, 
         "CRITIC_TRAINING_INTERVAL": 1,
-        "ACTOR_TARGET_UPDATE_INTERVAL": 1,
-        "CRITIC_TARGET_UPDATE_INTERVAL": 1,
+        "ACTOR_TARGET_UPDATE_INTERVAL": 2,
+        "CRITIC_TARGET_UPDATE_INTERVAL": 2,
         "N_ENVIRONMENTS": 1,
     }
     kwargs = {
         **default_kwargs,
+        "ACTOR_POLYAK": 1 - config["tau"],
+        "CRITIC_POLYAK": 1 - config["tau"],
+        "GAMMA": config["gamma"],
         "STEP_LIMIT": config["n_steps"],
         "ACTOR_BATCH_SIZE": config["batch_size"],
         "CRITIC_BATCH_SIZE": config["batch_size"],

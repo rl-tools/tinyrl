@@ -90,6 +90,8 @@ environment_configs = {
             "target_next_action_noise_std": 0.2,
             "target_next_action_noise_clip": 0.5,
             "exploration_noise": 0.1,
+            "tau": 0.005,
+            "gamma": 0.99
         },
         "Hopper-v4": {
             "n_seeds": 100 if TINYRL_FULL_RUN else 10,

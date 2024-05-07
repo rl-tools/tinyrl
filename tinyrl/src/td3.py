@@ -20,8 +20,6 @@ def TD3(env_factory, # can be either a lambda that creates a new Gym-like enviro
     GAMMA = 0.99,
     ACTOR_BATCH_SIZE = 100,
     CRITIC_BATCH_SIZE = 100,
-    N_WARMUP_STEPS_CRITIC = 0,
-    N_WARMUP_STEPS_ACTOR = 0,
     CRITIC_TRAINING_INTERVAL = 1,
     ACTOR_TRAINING_INTERVAL = 2,
     CRITIC_TARGET_UPDATE_INTERVAL = 2,
