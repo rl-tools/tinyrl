@@ -34,7 +34,7 @@ struct MyPendulum: rl_tools::rl::environments::Environment{
     using TI = typename SPEC::TI;
     using State = MyPendulumState<T, TI>;
     static constexpr TI OBSERVATION_DIM = 3;
-    static constexpr TI OBSERVATION_DIM_PRIVILEGED = 3;
+    static constexpr TI OBSERVATION_DIM_PRIVILEGED = 0;
     static constexpr TI ACTION_DIM = 1;
     static constexpr TI EPISODE_STEP_LIMIT = 200;
 };
