@@ -162,7 +162,7 @@ library_configs = {
             "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Pendulum-v1"]},
             "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Pendulum-v1"]},
             "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]},
-            "sbx": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]}
+            "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Pendulum-v1"]}
         },
     },
 }
