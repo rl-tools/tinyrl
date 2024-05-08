@@ -16,7 +16,7 @@ def env_factory_factory(config, **kwargs):
         return env
     return env_factory
 
-def train_tinyrl(config, use_python_environment=False):
+def train_tinyrl(config, use_python_environment=True):
     custom_environment = {
         "path": os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../custom_environment"),
         "action_dim": 1,
