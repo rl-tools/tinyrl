@@ -108,7 +108,7 @@ def train_cleanrl(config):
     for global_step in range(config["n_steps"]):
         if global_step % config["evaluation_interval"] == 0:
             def policy(observation):
-                return actor.forward(torch.Tensor(observation).to(device).unsqueeze(0))[0][0].detach().cpu().numpy()
+                return actor.forward(torch.Tensor(observation).to(device).unsqueeze(0))[0].detach().cpu().numpy()
             current_returns = evaluate_policy(policy, config, make_env(config), render=config["render"] and global_step >= 0)
             print(f"Step: {global_step}, Returns: {np.array(current_returns).mean()}", flush=True)
             returns.append(current_returns)

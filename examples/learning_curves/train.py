@@ -24,7 +24,7 @@ environment_configs = {
             "batch_size": 100,
         },
         "Hopper-v4": {
-            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 1000,
             "hidden_dim": 64,
@@ -160,18 +160,18 @@ library_configs = {
         # },
     },
     "TD3":{
-        "Pendulum-v1": {
-            "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Pendulum-v1"]},
-            "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Pendulum-v1"]},
-            "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]},
-            "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Pendulum-v1"]}
-        },
-        # "Hopper-v4": {
-        #     "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Hopper-v4"]},
-        #     "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Hopper-v4"]},
-        #     "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Hopper-v4"]},
-        #     "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Hopper-v4"]}
+        # "Pendulum-v1": {
+        #     "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Pendulum-v1"]},
+        #     "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Pendulum-v1"]},
+        #     "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]},
+        #     "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Pendulum-v1"]}
         # },
+        "Hopper-v4": {
+            "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Hopper-v4"]},
+            "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Hopper-v4"]},
+            "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Hopper-v4"]},
+            "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Hopper-v4"]}
+        },
     },
 }
 
