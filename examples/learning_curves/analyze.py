@@ -52,19 +52,29 @@ if __name__ == "__main__":
 
 
         returns_aggregate = returns.mean(axis=-1)
-        print(f"returns aggregate: {returns_aggregate}")
 
         returns_min = returns_aggregate.min(axis=0)
         returns_mean = returns_aggregate.mean(axis=0)
         returns_median = np.median(returns_aggregate, axis=0)
         returns_std = returns_aggregate.std(axis=0)
 
+
+        print(f"number of evaluations per run: {len(returns_mean)}")
+        returns_final = returns[:, -1]
+        iqm_quantile = 0.05
+        lower_quantile, upper_quantile = np.quantile(returns_final, iqm_quantile), np.quantile(returns_final, 1-iqm_quantile)
+        returns_within_quantile = returns_final[(returns_final >= lower_quantile) & (returns_final <= upper_quantile)]
+
+        iqm_mean = returns_within_quantile.mean()
+        iqm_std = returns_within_quantile.std()
+
         horizontal = range(0, config["n_steps"], config["evaluation_interval"])
-        ax.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
         # ax.plot(horizontal, returns_min, label=f"{library_lookup[library]} (min)")
         # ax.plot(horizontal, returns_median, label=f"{library_lookup[library]} (median {returns_median[-1]:.2f}, std {returns_std[-1]:.2f})")
-        label = f"{library_lookup[library]} (mean: {returns_mean[-1]:.2f}, std: {returns_std[-1]:.2f})"
+        # label = f"{library_lookup[library]} (mean: {returns_mean[-1:].mean():.2f}, std: {returns_std[-1:].mean():.2f})"
+        label = f"{library_lookup[library]} (iqm[{100*iqm_quantile:.0f},{100*(1-iqm_quantile):.0f}]: {iqm_mean:.2f}, std: {iqm_std:.2f})"
         ax.plot(horizontal, returns_mean, label=label)
+        ax.fill_between(horizontal, returns_mean - returns_std, returns_mean + returns_std, alpha=0.1)
         ax.set_xlabel("Steps")
         ax.set_ylabel("Returns")
 

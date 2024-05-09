@@ -81,7 +81,7 @@ environment_configs = {
     "TD3": {
         "Pendulum-v1": {
             "n_seeds": 100 if TINYRL_FULL_RUN else 10,
-            "n_steps": 20000,
+            "n_steps": 40000,
             "evaluation_interval": 100,
             "hidden_dim": 64,
             "learning_rate": 1e-3,
@@ -94,7 +94,7 @@ environment_configs = {
             "gamma": 0.99
         },
         "Hopper-v4": {
-            "n_seeds": 100 if TINYRL_FULL_RUN else 10,
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 1000,
             "hidden_dim": 64,
@@ -104,6 +104,8 @@ environment_configs = {
             "target_next_action_noise_std": 0.2,
             "target_next_action_noise_clip": 0.5,
             "exploration_noise": 0.1,
+            "tau": 0.005,
+            "gamma": 0.99
         },
         "Ant-v4": {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
@@ -164,6 +166,12 @@ library_configs = {
             "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Pendulum-v1"]},
             "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Pendulum-v1"]}
         },
+        # "Hopper-v4": {
+        #     "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Hopper-v4"]},
+        #     "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Hopper-v4"]},
+        #     "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Hopper-v4"]},
+        #     "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Hopper-v4"]}
+        # },
     },
 }
 
