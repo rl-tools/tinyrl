@@ -27,10 +27,10 @@ environment_configs = {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 1000,
-            "hidden_dim": 64,
+            "hidden_dim": 256,
             "learning_rate": 3e-4,
             "learning_starts": 10000,
-            "batch_size": 128,
+            "batch_size": 256,
         },
         "Ant-v4": {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
@@ -70,7 +70,7 @@ environment_configs = {
             "gamma": 0.99,
             "gae_lambda": 0.95,
             "batch_size": 64,
-            "hidden_dim": 64,
+            "hidden_dim": 256,
             "on_policy_runner_steps_per_env": 1024,
             "n_environments": 4,
             "clip_coef": 0.2,
@@ -97,10 +97,10 @@ environment_configs = {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
             "evaluation_interval": 1000,
-            "hidden_dim": 64,
+            "hidden_dim": 256,
             "learning_rate": 3e-4,
             "learning_starts": 10000,
-            "batch_size": 128,
+            "batch_size": 256,
             "target_next_action_noise_std": 0.2,
             "target_next_action_noise_clip": 0.5,
             "exploration_noise": 0.1,
@@ -130,12 +130,12 @@ library_configs = {
         #     "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]},
         #     "sbx": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Pendulum-v1"]}
         # },
-        # "Hopper-v4": {
-        #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
-        #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
-        #     "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
-        #     "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
-        # },
+        "Hopper-v4": {
+            "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Hopper-v4"]},
+            "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Hopper-v4"]},
+            "cleanrl": {**sac.default_config_cleanrl, **environment_configs["SAC"]["Hopper-v4"]},
+            "sbx": {**sac.default_config_sbx, **environment_configs["SAC"]["Hopper-v4"]}
+        },
         # "Ant-v4": {
         #     "tinyrl": {**sac.default_config_tinyrl, **environment_configs["SAC"]["Ant-v4"]},
         #     "sb3": {**sac.default_config_sb3, **environment_configs["SAC"]["Ant-v4"]},
