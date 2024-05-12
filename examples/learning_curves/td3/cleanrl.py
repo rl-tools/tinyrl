@@ -162,7 +162,6 @@ def train_cleanrl(config):
             qf_loss.backward()
             q_optimizer.step()
 
-            data = rb.sample(config["batch_size"])
             if global_step % config["policy_frequency"] == 0:
                 actor_loss = -qf1(data.observations, actor(data.observations)).mean()
                 actor_optimizer.zero_grad()
