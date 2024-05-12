@@ -31,7 +31,7 @@ def train_sb3(config):
         batch_size=config["batch_size"],
         tau=config["tau"],
         gamma=config["gamma"],
-        train_freq=2,
+        train_freq=1,
         gradient_steps=1,
         action_noise=NormalActionNoise(np.zeros_like(env.action_space.low), np.ones_like(env.action_space.low)*config["exploration_noise"]),
         policy_delay=2,

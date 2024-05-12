@@ -51,6 +51,8 @@ def find_compiler():
         platform_compiler = "cl"
     elif raw_platform_compiler.startswith("GCC"):
         platform_compiler = "g++"
+    elif raw_platform_compiler.startswith("Clang"):
+        platform_compiler = "clang++"
     else:
         platform_compiler = None
     if platform_compiler is None:
