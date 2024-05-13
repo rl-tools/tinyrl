@@ -88,7 +88,7 @@ def train_cleanrl(config):
                 log_std = torch.tanh(log_std)
                 log_std = LOG_STD_MIN + 0.5 * (LOG_STD_MAX - LOG_STD_MIN) * (log_std + 1)  # From SpinUp / Denis Yarats
             else:
-                logs_std = torch.clip(log_std, LOG_STD_MIN, LOG_STD_MAX)
+                log_std = torch.clip(log_std, LOG_STD_MIN, LOG_STD_MAX)
 
             return mean, log_std
 
@@ -174,7 +174,8 @@ def train_cleanrl(config):
 
         if global_step % config["evaluation_interval"] == 0:
             def policy(observation):
-                return actor.get_action(torch.Tensor(observation).to(device).unsqueeze(0))[0][0].detach().cpu().numpy()
+                _, _, action_mean = actor.get_action(torch.Tensor(observation).to(device).unsqueeze(0))
+                return action_mean[0].detach().cpu().numpy()
             current_returns = evaluate_policy(policy, config, make_env(config), render=config["render"] and global_step >= 0)
             print(f"Step: {global_step}, Returns: {np.array(current_returns).mean()}", flush=True)
             returns.append(current_returns)
