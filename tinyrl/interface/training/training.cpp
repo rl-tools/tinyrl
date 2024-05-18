@@ -23,6 +23,7 @@
 #include <rl_tools/nn_models/mlp_unconditional_stddev/operations_generic.h>
 #include <rl_tools/nn_models/mlp/persist_code.h>
 // #include <rl_tools/nn_models/mlp/persist_code.h>
+#include <rl_tools/nn/optimizers/adam/operations_generic.h>
 
 #include "loop_core_config.h"
 
