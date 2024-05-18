@@ -35,12 +35,12 @@ environment_configs = {
         "Ant-v4": {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
-            "evaluation_interval": 10000,
+            "evaluation_interval": 1000,
             "hidden_dim": 256,
             "learning_rate": 3e-4,
             "learning_starts": 10000,
             "batch_size": 256,
-        }
+        },
     },
     "PPO": {
         "Pendulum-v1": {
@@ -61,6 +61,23 @@ environment_configs = {
             "initial_action_std": 2.0
         },
         "Hopper-v4": {
+            "n_seeds": 30 if TINYRL_FULL_RUN else 10,
+            "n_steps": 1000, # ~ 300k steps
+            "evaluation_interval": 10,
+            "learning_rate": 1e-4,
+            "entropy_coefficient": 0.0,
+            "n_epochs": 5,
+            "gamma": 0.99,
+            "gae_lambda": 0.95,
+            "batch_size": 64,
+            "hidden_dim": 256,
+            "on_policy_runner_steps_per_env": 1024,
+            "n_environments": 4,
+            "clip_coef": 0.2,
+            "norm_advantage": True,
+            "initial_action_std": 1
+        },
+        "Ant-v4": {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000, # ~ 300k steps
             "evaluation_interval": 10,
@@ -110,7 +127,7 @@ environment_configs = {
         "Ant-v4": {
             "n_seeds": 30 if TINYRL_FULL_RUN else 10,
             "n_steps": 1000000 if TINYRL_FULL_RUN else 100000,
-            "evaluation_interval": 10000,
+            "evaluation_interval": 1000,
             "hidden_dim": 256,
             "learning_rate": 3e-4,
             "learning_starts": 10000,
@@ -118,7 +135,9 @@ environment_configs = {
             "target_next_action_noise_std": 0.2,
             "target_next_action_noise_clip": 0.5,
             "exploration_noise": 0.1,
-        }
+            "tau": 0.005,
+            "gamma": 0.99
+        },
     },
 }
 
@@ -158,6 +177,13 @@ library_configs = {
         #     "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Hopper-v4"]},
         #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Hopper-v4"]}
         # },
+        # "Ant-v4": {
+        #     "tinyrl": {**ppo.default_config_tinyrl, **environment_configs["PPO"]["Ant-v4"]},
+        #     "sb3": {**ppo.default_config_sb3, **environment_configs["PPO"]["Ant-v4"]},
+        #     "cleanrl": {**ppo.default_config_cleanrl, **environment_configs["PPO"]["Ant-v4"]},
+        #     # "cleanrltrunc": {**ppo.default_config_cleanrltrunc, **environment_configs["PPO"]["Hopper-v4"]},
+        #     "sbx": {**ppo.default_config_sbx, **environment_configs["PPO"]["Ant-v4"]}
+        # },
     },
     "TD3":{
         # "Pendulum-v1": {
@@ -171,6 +197,12 @@ library_configs = {
         #     "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Hopper-v4"]},
         #     "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Hopper-v4"]},
         #     "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Hopper-v4"]}
+        # },
+        # "Ant-v4": {
+        #     "tinyrl": {**td3.default_config_tinyrl, **environment_configs["TD3"]["Ant-v4"]},
+        #     "sb3": {**td3.default_config_sb3, **environment_configs["TD3"]["Ant-v4"]},
+        #     "cleanrl": {**td3.default_config_cleanrl, **environment_configs["TD3"]["Ant-v4"]},
+        #     "sbx": {**td3.default_config_sbx, **environment_configs["TD3"]["Ant-v4"]}
         # },
     },
 }
