@@ -1,4 +1,5 @@
 import os
+os.environ["TINYRL_IGNORE_TORCH_WARNING"] = "1"
 
 if not "TINYRL_DISABLE_PYTORCH_IMPORT_TEST" in os.environ:
     import torch

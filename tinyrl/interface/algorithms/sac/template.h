@@ -43,6 +43,7 @@ namespace TINYRL_MODULE_NAME{
         static constexpr auto CRITIC_ACTIVATION_FUNCTION = rlt::nn::activation_functions::ActivationFunction::$CRITIC_ACTIVATION_FUNCTION;
         static constexpr bool COLLECT_EPISODE_STATS = $COLLECT_EPISODE_STATS;
         static constexpr TI EPISODE_STATS_BUFFER_SIZE = $EPISODE_STATS_BUFFER_SIZE;
+        static constexpr bool SHARED_BATCH = $SHARED_BATCH;
         struct OPTIMIZER_PARAMETERS: rlt::nn::optimizers::adam::DEFAULT_PARAMETERS_TENSORFLOW<T>{
             static constexpr T ALPHA = $OPTIMIZER_ALPHA;
             static constexpr T BETA_1 = $OPTIMIZER_BETA_1;

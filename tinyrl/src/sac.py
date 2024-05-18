@@ -45,11 +45,13 @@ def SAC(env_factory, # can be either a lambda that creates a new Gym-like enviro
     CRITIC_ACTIVATION_FUNCTION = "RELU",
     COLLECT_EPISODE_STATS = True,
     EPISODE_STATS_BUFFER_SIZE = 1000,
+    SHARED_BATCH = True,
     # optimizer
     OPTIMIZER_ALPHA=1e-3,
     OPTIMIZER_BETA_1=0.9,
     OPTIMIZER_BETA_2=0.999,
     OPTIMIZER_EPSILON=1e-7,
+    OPTIMIZER_EPSILON_SQRT=1e-7,
     **kwargs
     ):
     verbose = verbose or "TINYRL_VERBOSE" in os.environ
