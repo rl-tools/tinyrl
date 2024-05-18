@@ -49,6 +49,7 @@ namespace TINYRL_MODULE_NAME{
             static constexpr T BETA_1 = $OPTIMIZER_BETA_1;
             static constexpr T BETA_2 = $OPTIMIZER_BETA_2;
             static constexpr T EPSILON = $OPTIMIZER_EPSILON;
+            static constexpr T EPSILON_SQRT = $OPTIMIZER_EPSILON_SQRT;
         };
     };
 

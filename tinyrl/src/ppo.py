@@ -55,6 +55,7 @@ def PPO(env_factory, # can be either a lambda that creates a new Gym-like enviro
     OPTIMIZER_BETA_1=0.9,
     OPTIMIZER_BETA_2=0.999,
     OPTIMIZER_EPSILON=1e-7,
+    OPTIMIZER_EPSILON_SQRT=1e-7,
     **kwargs
     ):
     assert STEP_LIMIT is not None or TOTAL_STEP_LIMIT is not None, "Either STEP_LIMIT or TOTAL_STEP_LIMIT must be set"
