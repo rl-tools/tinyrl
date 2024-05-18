@@ -22,7 +22,7 @@ def model_definition(N):
     rendered_type = ""
     rendered_instance = ""
     for i in range(N):
-        rendered_type += f"Module<layer_{i}::TYPE" + (", " if i < N - 1 else "")
+        rendered_type += f"IF::Module<layer_{i}::TEMPLATE" + (", " if i < N - 1 else "")
         rendered_instance += f"{{layer_{i}::layer" + (", " if i < N - 1 else "")
     for i in range(N):
         rendered_type += ">"
@@ -34,7 +34,8 @@ model_template = Template("""
 namespace policy{
     $LAYERS
     namespace model_definition {
-        using namespace RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn_models::sequential::interface;
+        using CAPABILITY = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layer_capability::Forward; 
+        using IF = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn_models::sequential::Interface<CAPABILITY>;
         using MODEL = $MODEL_TYPE;
     }
     using MODEL = model_definition::MODEL;
@@ -70,11 +71,15 @@ namespace layer_$LAYER_ID{
         using PARAMETER_SPEC = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::parameters::Plain::spec<parameters_memory::CONTAINER_TYPE, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::parameters::groups::Normal, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::parameters::categories::Biases>;
         const rl_tools::nn::parameters::Plain::instance<PARAMETER_SPEC> parameters = {parameters_memory::container};
     }
-    using SPEC = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layers::dense::Specification<$T, $TI, $INPUT_DIM, $OUTPUT_DIM, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::activation_functions::ActivationFunction::$ACTIVATION_FUNCTION, rl_tools::nn::parameters::Plain, 1, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::parameters::groups::Normal, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::MatrixDynamicTag, true, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::matrix::layouts::RowMajorAlignment<$TI, 1>>; 
-    using TYPE = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layers::dense::Layer<SPEC>;
+    using SPEC = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layers::dense::Specification<$T, $TI, $INPUT_DIM, $OUTPUT_DIM, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::activation_functions::ActivationFunction::$ACTIVATION_FUNCTION, 1, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::parameters::groups::Normal, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::MatrixDynamicTag, true, RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::matrix::layouts::RowMajorAlignment<$TI, 1>>; 
+    template <typename CAPABILITY>
+    using TEMPLATE = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layers::dense::Layer<CAPABILITY, SPEC>;
+    using CAPABILITY = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layer_capability::Forward;
+    using TYPE = RL_TOOLS_NAMESPACE_WRAPPER ::rl_tools::nn::layers::dense::Layer<CAPABILITY, SPEC>;
     const TYPE layer = {weights::parameters, biases::parameters};
 }
 """)
+
 
 def convert_float_to_uint8(value):
     bytes_value = struct.pack('f', value)

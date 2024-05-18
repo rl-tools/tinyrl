@@ -44,6 +44,8 @@ def test_pytorch_import():
 
     rlt_model = load_checkpoint_from_path(output_path, interface_name="test_pytorch_import")
     loaded_output2 = rlt_model.evaluate(dummy_input.numpy()[0])
+    max_output_diff = (torch.tensor(loaded_output2) - model(dummy_input)).abs().max()
+    print("Max output diff: ", max_output_diff)
     assert torch.allclose(model(dummy_input), torch.tensor(loaded_output2), atol=1e-6)
 
 
