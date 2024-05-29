@@ -15,6 +15,7 @@ def train_sbx(config):
     from stable_baselines3.common.callbacks import BaseCallback
 
     import jax
+    import flax.linen as nn
     random.seed(config["seed"])
     np.random.seed(config["seed"])
     def env_factory(seed=0):
@@ -26,7 +27,7 @@ def train_sbx(config):
     # envs = DummyVecEnv([lambda: env_factory(seed=(config["seed"]*config["n_environments"] + i)) for i in range(config["n_environments"])])
     envs = env_factory()
     def policy_factory(obs_dim, action_dim, lr_schedule, **kwargs):
-        return PPOPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], optimizer_kwargs={}, activation_fn=jax.nn.relu, share_features_extractor=False, ortho_init=False, log_std_init=np.log(config["initial_action_std"]))
+        return PPOPolicy(obs_dim, action_dim, lr_schedule, net_arch=[config["hidden_dim"], config["hidden_dim"]], optimizer_kwargs={"eps": 1e-8}, activation_fn=nn.relu, share_features_extractor=False, ortho_init=False, log_std_init=np.log(config["initial_action_std"]))
     model = SBX_PPO(policy_factory, envs, 
         learning_rate=config["learning_rate"],
         ent_coef=config["entropy_coefficient"],
